@@ -226,24 +226,6 @@ svg.button-active{
 	opacity: 0.3;
 }
 
-.design-options-wrapper #cabinetIcon{
-	background: url(../media/cabinet_icon.png) no-repeat;
-	background-position: center center;
-	background-size: contain;
-}
-
-.design-options-wrapper #backsplashIcon{
-	background: url(../media/backsplash_icon.png) no-repeat;
-	background-position: center center;
-	background-size: contain;
-}
-
-.design-options-wrapper #countertopIcon{
-	background: url(../media/countertop_icon.png) no-repeat;
-	background-position: center center;
-	background-size: contain;
-}
-
 .design-options-wrapper .design-icons-wrap .check-design-option{
 	height: 22px;
 	width: 22px;
@@ -757,17 +739,17 @@ svg.button-active{
 .inner-sliding-modal .modal-dialog.modal-notify.modal-info .modal-header div h5 {
 	color: #fff;
 	margin: 0;
-	font-size: 18px;
+	font-size: 16px;
 	font-weight: 500;
-	line-height: 28px;
+	line-height: 25px;
 	text-transform: capitalize;
 }
 
 .inner-sliding-modal .modal-dialog.modal-notify.modal-info .modal-header div span {
-	width: 28px;
-	height: 28px;
-	font-size: 15px;
-	padding: 6.5px;
+	width: 25px;
+	height: 25px;
+	font-size: 14px;
+	padding: 5.5px;
 	background: #374a95;
 	color: #fff;
 	border-radius: 50%;
@@ -775,7 +757,7 @@ svg.button-active{
 
 .inner-sliding-modal .modal-dialog.modal-notify.modal-info .modal-header div span.cross {
 	background: transparent !important;
-	font-size: 28px;
+	font-size: 25px;
 	padding: 0;
 }
 
@@ -792,6 +774,10 @@ svg.button-active{
 .inner-sliding-modal .modal-dialog.modal-notify.modal-info .modal-header .close-tab svg {
 	width: 24px;
 	height: 24px;
+}
+
+.show-loader{
+	opacity: 1 !important;
 }
 
 /* Responsive  */

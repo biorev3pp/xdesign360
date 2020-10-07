@@ -129,11 +129,18 @@ $(".image-icons-wrap").on('mouseenter', function(){
     $(this).find('span').addClass('show-buttons');
     $(this).find('.back-image').addClass('fade-image');
 });
+
 $(".image-icons-wrap").not(".image-icons-wrap span").on('mouseleave', function(){
     if(!$(this).hasClass('design-active') && !$(this).hasClass('color-active')){
         $(this).find('span').removeClass('show-buttons');
         $(this).find('.back-image').removeClass('fade-image');
     }
+});
+
+// initialize filter functions
+$.each($('.content-container'), function(){
+    search(`#${$(this).attr('id')}`);
+    sort(`#${$(this).attr('id')}`);
 });
 
 // Choose Section Click
@@ -173,7 +180,6 @@ $('#searchIcon').on('click', function(){
     $('.design-options-wrapper .sidemenu.extended .content-container').removeClass('add-filter-height');
     $(this).toggleClass('button-active');
     $('#searchInput').toggleClass('show-input');
-    $('#searchInput').val('');
 });
 
 // Filter Icon
@@ -220,7 +226,6 @@ function selectColorOption(activeTab){
         $(this).parent().parent().addClass('color-active');
     });
 }
-
 
 //Price Formatter
 var formatter = new Intl.NumberFormat('en-US', {
@@ -299,6 +304,83 @@ $(".rating-filter").ionRangeSlider({
     }
 });
 
-function showFeatureModal(){
+// Info Modal
+function showFeatureModal(designId, designType){ 
     $('#featureModal').modal('show');
+    $("#loader").addClass('show-loader');
+    $.get("/api/get-design-info/"+designId, function( data ) {
+        $('.feature-image-wrapper img').attr('src', `/media/${designType}/${data.thumbnail}`)
+        $('.f-material').text(data.material);
+        $('.f-manufacturer').text(data.manufacturer);
+        $('.f-name').text(data.title);
+        $('.f-price').text(formatter.format(data.price));
+        $('.f-id').text(data.product_id);
+        $("#loader").removeClass('show-loader');
+        $("#featureModal .modal-body").fadeIn();
+    });
+}
+
+// Search Function
+function search(activeTab) {
+    $('#searchInput').on('input', function(){
+        var input, filter, items, textValue;
+        input = document.getElementById('searchInput');
+        filter = input.value.toUpperCase();
+        items = $(activeTab).find('.design-container').next();
+        console.log(items);
+        $.each(items, function(){
+            textValue = $(this).text();
+            if (textValue.toUpperCase().indexOf(filter) > -1) {
+                $(this).parent().show();
+            } else {
+                $(this).parent().hide();
+            }
+        });
+    });
+}
+
+// Sort Function
+function sort(activeTab) {
+    $('#sortInput').on('change', function(){
+        var i, switching = true, items, shouldSwitch, sortType = $(this).val();
+        /* Make a loop that will continue until no switching has been done: */
+        while (switching) {
+            // start by saying: no switching is done:
+            switching = false;
+            items = $(activeTab).find('.design-container').next();
+            for(i = 0; i < (items.length - 1); i++){
+                shouldSwitch = false;
+                if (sortType == "asc") {
+                    if (items[i].innerHTML.toLowerCase() > items[i+1].innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                } 
+                else if (sortType == "desc") {
+                    if (items[i].innerHTML.toLowerCase() < items[i+1].innerHTML.toLowerCase()) {
+                        shouldSwitch= true;
+                        break;
+                    }
+                }
+                else if (sortType == "low_to_high"){
+                    console.log(Number(items[i].getAttribute('data-price')));
+                    if (Number(items[i].getAttribute('data-price')) > Number(items[i+1].getAttribute('data-price'))) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+                else if (sortType == "high_to_low"){
+                    if (Number(items[i].getAttribute('data-price')) < Number(items[i+1].getAttribute('data-price'))) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+            if (shouldSwitch) {
+                /* If a switch has been marked, make the switchand mark the switch as done: */
+                items[i].parentNode.parentNode.insertBefore(items[i+1].parentNode, items[i].parentNode);
+                switching = true;
+            }
+        }
+    });
 }
