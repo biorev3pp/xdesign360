@@ -29,9 +29,8 @@
             <div class="custom-scroll designs-scroll scroll-width-thin">
                 <div class="filters-wrapper" id="filtersWrap"> 
                     <div class="select-fil-d-main">
-                        <select type="button" class="select-filter-input js-example-basic-single" name="value">4
+                        <select type="button" class="select-filter-input js-example-basic-single" name="value">
                             <option></option>
-                            <option value="red">Red</option>
                         </select>                                        
                     </div>      
                     <div class="select-fil-d-main dropdown">
@@ -132,7 +131,7 @@
                     <span class="material-icons mr-2" style="background: #7bc22a;">
                     color_lens
                     </span>
-                    <h5>Color Option</h5>
+                    <h5>Product Info</h5>
                 </div>
                 <div data-toggle="collapse" data-target="#floor-tab-1" class="close-tab" data-dismiss="modal" aria-label="Close">
                     <span class="material-icons cross">

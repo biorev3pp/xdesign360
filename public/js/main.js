@@ -1,6 +1,8 @@
 feather.replace()
+// Global Variables
+var openMenu = true, searchApplied = false, filterApplied = false, items, fromPrice = 0, toPrice = 1200, itemsShown = [];
+
 // Header & Footer
-let openMenu = true;
 function openNav() {
     openMenu =! openMenu;
     if(openMenu){
@@ -41,86 +43,89 @@ function resizeCanvas() {
         canvas.width = $('.main-wrapper').innerWidth();
     }
     canvas.height = $('.main-wrapper').innerHeight();
-    drawStuff(); 
+    drawStuff('../media/base_image1.jpg'); 
 }
 resizeCanvas();
-function drawStuff() {
-    if(window.innerHeight > window.innerWidth){
-        var img = new Image();
-        img.onload= drawImageScaled.bind(null, img, ctx);
-    
-        function drawImageScaled(img, ctx) {
-            var hRatio = canvas.width  / img.width;
-            var vRatio =  canvas.height / img.height;
-            var ratio  = Math.min ( hRatio, vRatio );
-            var centerShift_x = ( canvas.width - img.width*ratio ) / 2;
-            var centerShift_y = ( canvas.height - img.height*ratio ) / 2;  
-            ctx.clearRect(0,0,canvas.width, canvas.height);
-            ctx.drawImage(img, 0,0, img.width, img.height,
-                                centerShift_x,centerShift_y,img.width*ratio, img.height*ratio);  
+
+function drawImageScaled(img, ctx) {
+    var hRatio = canvas.width  / img.width;
+    var vRatio =  canvas.height / img.height;
+    var ratio  = Math.min ( hRatio, vRatio );
+    var centerShift_x = ( canvas.width - img.width*ratio ) / 2;
+    var centerShift_y = ( canvas.height - img.height*ratio ) / 2;  
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+    ctx.drawImage(img, 0,0, img.width, img.height,centerShift_x,centerShift_y,img.width*ratio, img.height*ratio);  
+}
+
+function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY) {
+    if (arguments.length === 2) {
+        x = y = 0;
+        w = ctx.canvas.width;
+        h = ctx.canvas.height;
+    }
+
+    // default offset is center
+    offsetX = typeof offsetX === "number" ? offsetX : 0.5;
+    offsetY = typeof offsetY === "number" ? offsetY : 0.5;
+
+    // keep bounds [0.0, 1.0]
+    if (offsetX < 0) offsetX = 0;
+    if (offsetY < 0) offsetY = 0;
+    if (offsetX > 1) offsetX = 1;
+    if (offsetY > 1) offsetY = 1;
+
+    var iw = img.width,
+        ih = img.height,
+        r = Math.min(w / iw, h / ih),
+        nw = iw * r,   // new prop. width
+        nh = ih * r,   // new prop. height
+        cx, cy, cw, ch, ar = 1;
+
+    // decide which gap to fill    
+    if (nw < w) ar = w / nw;                             
+    if (Math.abs(ar - 1) < 1e-14 && nh < h) ar = h / nh;  // updated
+    nw *= ar;
+    nh *= ar;
+
+    // calc source rectangle
+    cw = iw / (nw / w);
+    ch = ih / (nh / h);
+
+    cx = (iw - cw) * offsetX;
+    cy = (ih - ch) * offsetY;
+
+    // make sure source rectangle is valid
+    if (cx < 0) cx = 0;
+    if (cy < 0) cy = 0;
+    if (cw > iw) cw = iw;
+    if (ch > ih) ch = ih;
+
+    // fill image in dest. rectangle
+    ctx.drawImage(img, cx, cy, cw, ch,  x, y, w, h);
+}
+
+function drawStuff(imageSource) {
+    var img = new Image();
+    img.src = imageSource;
+    img.onload = function(){
+        if(window.innerHeight > window.innerWidth){
+            drawImageScaled(img, ctx);
         }
-        img.src = '../media/base-image.png';
-    } else {
-        function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY) {
-            if (arguments.length === 2) {
-                x = y = 0;
-                w = ctx.canvas.width;
-                h = ctx.canvas.height;
-            }
-        
-            // default offset is center
-            offsetX = typeof offsetX === "number" ? offsetX : 0.5;
-            offsetY = typeof offsetY === "number" ? offsetY : 0.5;
-        
-            // keep bounds [0.0, 1.0]
-            if (offsetX < 0) offsetX = 0;
-            if (offsetY < 0) offsetY = 0;
-            if (offsetX > 1) offsetX = 1;
-            if (offsetY > 1) offsetY = 1;
-        
-            var iw = img.width,
-                ih = img.height,
-                r = Math.min(w / iw, h / ih),
-                nw = iw * r,   // new prop. width
-                nh = ih * r,   // new prop. height
-                cx, cy, cw, ch, ar = 1;
-        
-            // decide which gap to fill    
-            if (nw < w) ar = w / nw;                             
-            if (Math.abs(ar - 1) < 1e-14 && nh < h) ar = h / nh;  // updated
-            nw *= ar;
-            nh *= ar;
-        
-            // calc source rectangle
-            cw = iw / (nw / w);
-            ch = ih / (nh / h);
-        
-            cx = (iw - cw) * offsetX;
-            cy = (ih - ch) * offsetY;
-        
-            // make sure source rectangle is valid
-            if (cx < 0) cx = 0;
-            if (cy < 0) cy = 0;
-            if (cw > iw) cw = iw;
-            if (ch > ih) ch = ih;
-        
-            // fill image in dest. rectangle
-            ctx.drawImage(img, cx, cy, cw, ch,  x, y, w, h);
-        }
-        var image = new Image();
-        image.src = '../media/base-image.png';
-        image.onload = function(){
-            drawImageProp(ctx, image, 0, 0, canvas.width, canvas.height);
+        else{
+            drawImageProp(ctx, img, 0, 0, canvas.width, canvas.height);
         }
     }
 }
+
 // Toggle Button - View Button
 $('.cb-value').on('click', function() {
     var mainParent = $(this).parent('.toggle-btn');
     if($(mainParent).find('input.cb-value').is(':checked')) {
         $(mainParent).addClass('active');
+        drawStuff('../media/base_image2.jpg');
     } else {
         $(mainParent).removeClass('active');
+        drawStuff('../media/base_image1.jpg');
     }
 });
 
@@ -137,10 +142,12 @@ $(".image-icons-wrap").not(".image-icons-wrap span").on('mouseleave', function()
     }
 });
 
-// initialize filter functions
-$.each($('.content-container'), function(){
-    search(`#${$(this).attr('id')}`);
-    sort(`#${$(this).attr('id')}`);
+//Price Formatter
+var formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
 });
 
 // Choose Section Click
@@ -178,14 +185,21 @@ $('#searchIcon').on('click', function(){
     $('#sortWrap').removeClass('open');
     $('.design-options-wrapper .sidemenu.extended .content-container').removeClass('add-sort-height');
     $('.design-options-wrapper .sidemenu.extended .content-container').removeClass('add-filter-height');
-    $(this).toggleClass('button-active');
-    $('#searchInput').toggleClass('show-input');
+    if($('#searchInput').val() == ""){
+        $(this).toggleClass('button-active');
+        $('#searchInput').toggleClass('show-input');
+    }
 });
 
 // Filter Icon
 $('#filterIcon').on('click', function(){
-    $('.content-actions-icons-wrap svg').not(this).removeClass('button-active');
-    $('#searchInput').removeClass('show-input');
+    if($('#searchInput').val() == ""){
+        $('.content-actions-icons-wrap svg').not(this).removeClass('button-active');
+        $('#searchInput').removeClass('show-input');
+    }
+    else{
+        $('.content-actions-icons-wrap svg').not(this).not('.content-actions-icons-wrap svg:first-child').removeClass('button-active');
+    }
     $('#sortWrap').removeClass('open');
     $('.design-options-wrapper .sidemenu.extended .content-container').removeClass('add-sort-height');
     $('.design-options-wrapper .sidemenu.extended .content-container').toggleClass('add-filter-height');
@@ -195,8 +209,13 @@ $('#filterIcon').on('click', function(){
 
 // Sort Icon
 $('#sortIcon').on('click', function(){
-    $('.content-actions-icons-wrap svg').not(this).removeClass('button-active');
-    $('#searchInput').removeClass('show-input');
+    if($('#searchInput').val() == ""){
+        $('.content-actions-icons-wrap svg').not(this).removeClass('button-active');
+        $('#searchInput').removeClass('show-input');
+    }
+    else{
+        $('.content-actions-icons-wrap svg').not(this).not('.content-actions-icons-wrap svg:first-child').removeClass('button-active');
+    }
     $('#filtersWrap').removeClass('open');
     $('.design-options-wrapper .sidemenu.extended .content-container').removeClass('add-filter-height');
     $('.design-options-wrapper .sidemenu.extended .content-container').toggleClass('add-sort-height');
@@ -227,14 +246,6 @@ function selectColorOption(activeTab){
     });
 }
 
-//Price Formatter
-var formatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-});
-
 //Bootstrap dropdown
 $(document).on('click', '.dropdown-menu', function (e) {
     e.stopPropagation();
@@ -248,60 +259,7 @@ $('.filters-wrapper .dropdown').on('hide.bs.dropdown', function () {
 
 // Search Select Select2
 $('.js-example-basic-single').select2({
-    placeholder: 'Select Color',
-});
-
-// Filters
-//Price Filter
-$(".price-filter").ionRangeSlider({
-    type: "double",
-    min: 0,
-    max: 1000,
-    from: 0,
-    to: 1000,
-    grid: false,
-    skin: "round",
-    hide_min_max: true,    
-    hide_from_to: true,
-    onStart: function(data){
-        $(".select-fil-d-main .dropdown-menu .price .start-value").html(formatter.format(data.from));
-        $(".select-fil-d-main .dropdown-menu .price .end-value").html(formatter.format(data.to));
-        $(".price-badge").html(`${formatter.format(data.from)} - ${formatter.format(data.to)}`);
-    },
-    onChange: function (data) {
-        $(".select-fil-d-main .dropdown-menu .price .start-value").html(formatter.format(data.from));
-        $(".select-fil-d-main .dropdown-menu .price .end-value").html(formatter.format(data.to));
-        $(".price-badge").html(`${formatter.format(data.from)} - ${formatter.format(data.to)}`);
-    },
-    onFinish: function(data){  
-
-    }
-});
-
-//Rating Filter
-$(".rating-filter").ionRangeSlider({
-    type: "double",
-    min: 0,
-    max: 5,
-    from: 0,
-    to: 1000,
-    grid: false,
-    skin: "round",
-    hide_min_max: true,    
-    hide_from_to: true,
-    onStart: function(data){
-        $(".select-fil-d-main .dropdown-menu .rating .start-value").html(data.from);
-        $(".select-fil-d-main .dropdown-menu .rating .end-value").html(data.to);
-        $(".rating-badge").html(`${data.from} - ${data.to}`);
-    },
-    onChange: function (data) {
-        $(".select-fil-d-main .dropdown-menu .rating .start-value").html(data.from);
-        $(".select-fil-d-main .dropdown-menu .rating .end-value").html(data.to);
-        $(".rating-badge").html(`${data.from} - ${data.to}`);
-    },
-    onFinish: function(data){  
-
-    }
+    placeholder: 'Select Design',
 });
 
 // Info Modal
@@ -321,23 +279,131 @@ function showFeatureModal(designId, designType){
 }
 
 // Search Function
-function search(activeTab) {
+function search() {
     $('#searchInput').on('input', function(){
-        var input, filter, items, textValue;
-        input = document.getElementById('searchInput');
-        filter = input.value.toUpperCase();
-        items = $(activeTab).find('.design-container').next();
-        console.log(items);
-        $.each(items, function(){
-            textValue = $(this).text();
-            if (textValue.toUpperCase().indexOf(filter) > -1) {
-                $(this).parent().show();
-            } else {
-                $(this).parent().hide();
+        var input, textValue;
+        input = document.getElementById('searchInput').value.toUpperCase();
+        if(!filterApplied){
+            itemsShown = [];
+            if(input != ''){
+                searchApplied = true;
+                items = $('.content-container').find('.design-container').next();
+                $.each(items, function(){
+                    textValue = $(this).text();
+                    var parent = $(this).parent();
+                    if (textValue.toUpperCase().indexOf(input) > -1) {
+                        parent.show();
+                        itemsShown.push(this);
+                    } else {
+                        parent.hide();
+                    }
+                });
             }
-        });
+            else{
+                searchApplied = false;
+                filter(fromPrice, toPrice);
+            }
+        }
+        else{
+            if(input != ''){
+                searchApplied = true;
+                items = itemsShown;
+                $.each(items, function(){
+                    textValue = $(this).text();
+                    var parent = $(this).parent();
+                    if (textValue.toUpperCase().indexOf(input) > -1) {
+                        parent.show();
+                    } else {
+                        parent.hide();
+                    }
+                });
+            }
+            else{
+                searchApplied = false;
+                filter(fromPrice, toPrice);
+            }
+        }
     });
 }
+
+// Filter function
+function filter(min, max){
+    if(!searchApplied){
+        items = $('.content-container').find('.design-container').next();
+        itemsShown = [];
+        $.each(items, function(){
+            var parent = $(this).parent();
+            if (Number(this.getAttribute('data-price')) >= min && Number(this.getAttribute('data-price')) <= max) {
+                parent.show();
+                itemsShown.push(this);
+            } else {
+                parent.hide();
+            }
+        });
+    }
+    else{
+        items = itemsShown;
+        $.each(items, function(){
+            var parent = $(this).parent();
+            if (Number(this.getAttribute('data-price')) >= min && Number(this.getAttribute('data-price')) <= max) {
+                parent.show();
+            } else {
+                parent.hide();
+            }
+        });
+    }   
+}
+
+//Price Filter
+$('.price-filter').ionRangeSlider({
+    type: "double",
+    min: 0,
+    max: 1200,
+    from: 0,
+    to: 1200,
+    grid: false,
+    skin: "round",
+    hide_min_max: true,    
+    hide_from_to: true,
+    onStart: function(data){
+        $(".select-fil-d-main .dropdown-menu .price .start-value").html(formatter.format(data.from));
+        $(".select-fil-d-main .dropdown-menu .price .end-value").html(formatter.format(data.to));
+        $(".price-badge").html(`${formatter.format(data.from)} - ${formatter.format(data.to)}`);
+        filter(data.from, data.to);
+    },
+    onChange: function (data) {
+        fromPrice = data.from;
+        toPrice = data.to;
+        $(".select-fil-d-main .dropdown-menu .price .start-value").html(formatter.format(data.from));
+        $(".select-fil-d-main .dropdown-menu .price .end-value").html(formatter.format(data.to));
+        $(".price-badge").html(`${formatter.format(data.from)} - ${formatter.format(data.to)}`);
+        filter(data.from, data.to);
+        filterApplied = true;
+    },
+});
+
+//Rating Filter
+$(".rating-filter").ionRangeSlider({
+    type: "double",
+    min: 0,
+    max: 5,
+    from: 0,
+    to: 5,
+    grid: false,
+    skin: "round",
+    hide_min_max: true,    
+    hide_from_to: true,
+    onStart: function(data){
+        $(".select-fil-d-main .dropdown-menu .rating .start-value").html(data.from);
+        $(".select-fil-d-main .dropdown-menu .rating .end-value").html(data.to);
+        $(".rating-badge").html(`${data.from} - ${data.to}`);
+    },
+    onChange: function (data){
+        $(".select-fil-d-main .dropdown-menu .rating .start-value").html(data.from);
+        $(".select-fil-d-main .dropdown-menu .rating .end-value").html(data.to);
+        $(".rating-badge").html(`${data.from} - ${data.to}`);
+    },
+});
 
 // Sort Function
 function sort(activeTab) {
@@ -384,3 +450,11 @@ function sort(activeTab) {
         }
     });
 }
+
+// Call search function
+search();
+
+// call sort function
+$.each($('.content-container'), function(){
+    sort(`#${$(this).attr('id')}`);
+});
