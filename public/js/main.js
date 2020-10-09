@@ -1,6 +1,22 @@
 feather.replace()
+
 // Global Variables
-var openMenu = true, searchApplied = false, filterApplied = false, items, fromPrice = 0, toPrice = 1200, itemsShown = [];
+var openMenu = true, 
+searchApplied = false, 
+filterApplied = false, 
+items, fromPrice = 0, 
+toPrice = 1200, 
+itemsShown = [], 
+canvas = document.getElementById('canvas'),
+ctx = canvas.getContext('2d');
+
+//Price Formatter
+var formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+});
 
 // Header & Footer
 function openNav() {
@@ -21,7 +37,6 @@ if(window.innerHeight > window.innerWidth){
 }
 // Orientation Change
 window.onorientationchange = function(event) { 
-    console.log("the orientation of the device is now " + event.target.screen.orientation.angle);
     if(event.target.screen.orientation.angle == 0){
         toastr.info("For better experience switch to landscape mode");
     }
@@ -30,22 +45,58 @@ window.onorientationchange = function(event) {
     }
 };
 
-// Canvas
-var canvas = document.getElementById('canvas'),
-ctx = canvas.getContext('2d');
-
 // resize the canvas to fill browser window dynamically
 window.addEventListener('resize', resizeCanvas, false);
 function resizeCanvas() {
     if(window.innerWidth > 991){
-        canvas.width = $('.main-wrapper').innerWidth() -140;
+        canvas.width = $('.main-wrapper').innerWidth()-140;
     } else {
         canvas.width = $('.main-wrapper').innerWidth();
     }
     canvas.height = $('.main-wrapper').innerHeight();
-    drawStuff('../media/base_image1.jpg'); 
+    if($('.toggle-btn').find('input.cb-value').is(':checked')) {
+        $('.toggle-btn').addClass('active');
+        drawStuff(sourcesView2);
+    } else {
+        $('.toggle-btn').removeClass('active');
+        drawStuff(sourcesView1);
+    }
 }
 resizeCanvas();
+
+function drawStuff(sources) {
+    loadImages(sources, function(images) {
+        $.each(images, function(){
+            if(window.innerHeight > window.innerWidth){
+                drawImageScaled(this, ctx);
+            }
+            else{
+                drawImageProp(ctx, this, 0, 0, canvas.width, canvas.height);
+            }
+            $('#mainLoader').hide();
+        });
+    });
+}
+
+function loadImages(sources, callback) {
+    $('#mainLoader').show();
+    var images = {};
+    var loadedImages = 0;
+    var numImages = 0;
+    // get num of sources
+    for(var src in sources) {
+        numImages++;
+    }
+    for(var src in sources) {
+        images[src] = new Image();
+        images[src].onload = function() {
+            if(++loadedImages >= numImages) {
+                callback(images);
+            }
+        };
+        images[src].src = sources[src];
+    }
+}
 
 function drawImageScaled(img, ctx) {
     var hRatio = canvas.width  / img.width;
@@ -53,7 +104,6 @@ function drawImageScaled(img, ctx) {
     var ratio  = Math.min ( hRatio, vRatio );
     var centerShift_x = ( canvas.width - img.width*ratio ) / 2;
     var centerShift_y = ( canvas.height - img.height*ratio ) / 2;  
-    ctx.clearRect(0,0,canvas.width, canvas.height);
     ctx.drawImage(img, 0,0, img.width, img.height,centerShift_x,centerShift_y,img.width*ratio, img.height*ratio);  
 }
 
@@ -104,28 +154,15 @@ function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY) {
     ctx.drawImage(img, cx, cy, cw, ch,  x, y, w, h);
 }
 
-function drawStuff(imageSource) {
-    var img = new Image();
-    img.src = imageSource;
-    img.onload = function(){
-        if(window.innerHeight > window.innerWidth){
-            drawImageScaled(img, ctx);
-        }
-        else{
-            drawImageProp(ctx, img, 0, 0, canvas.width, canvas.height);
-        }
-    }
-}
-
 // Toggle Button - View Button
 $('.cb-value').on('click', function() {
     var mainParent = $(this).parent('.toggle-btn');
     if($(mainParent).find('input.cb-value').is(':checked')) {
         $(mainParent).addClass('active');
-        drawStuff('../media/base_image2.jpg');
+        drawStuff(sourcesView2);
     } else {
         $(mainParent).removeClass('active');
-        drawStuff('../media/base_image1.jpg');
+        drawStuff(sourcesView1);
     }
 });
 
@@ -140,14 +177,6 @@ $(".image-icons-wrap").not(".image-icons-wrap span").on('mouseleave', function()
         $(this).find('span').removeClass('show-buttons');
         $(this).find('.back-image').removeClass('fade-image');
     }
-});
-
-//Price Formatter
-var formatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
 });
 
 // Choose Section Click
@@ -265,9 +294,10 @@ $('.js-example-basic-single').select2({
 // Info Modal
 function showFeatureModal(designId, designType){ 
     $('#featureModal').modal('show');
+    $("#featureModal .modal-body").hide();
     $("#loader").addClass('show-loader');
     $.get("/api/get-design-info/"+designId, function( data ) {
-        $('.feature-image-wrapper img').attr('src', `/media/${designType}/${data.thumbnail}`)
+        $('.feature-image-wrapper img').attr('src', `/media/uploads/${designType}/${data.thumbnail}`)
         $('.f-material').text(data.material);
         $('.f-manufacturer').text(data.manufacturer);
         $('.f-name').text(data.title);
@@ -369,6 +399,8 @@ $('.price-filter').ionRangeSlider({
         $(".select-fil-d-main .dropdown-menu .price .start-value").html(formatter.format(data.from));
         $(".select-fil-d-main .dropdown-menu .price .end-value").html(formatter.format(data.to));
         $(".price-badge").html(`${formatter.format(data.from)} - ${formatter.format(data.to)}`);
+        
+        // Call filter funtion
         filter(data.from, data.to);
     },
     onChange: function (data) {
@@ -377,6 +409,8 @@ $('.price-filter').ionRangeSlider({
         $(".select-fil-d-main .dropdown-menu .price .start-value").html(formatter.format(data.from));
         $(".select-fil-d-main .dropdown-menu .price .end-value").html(formatter.format(data.to));
         $(".price-badge").html(`${formatter.format(data.from)} - ${formatter.format(data.to)}`);
+        
+        // Call filter funtion
         filter(data.from, data.to);
         filterApplied = true;
     },
@@ -454,7 +488,7 @@ function sort(activeTab) {
 // Call search function
 search();
 
-// call sort function
+// Call sort function
 $.each($('.content-container'), function(){
     sort(`#${$(this).attr('id')}`);
 });

@@ -104,7 +104,7 @@
                             @foreach($design_type->designs as $design)
                             <div class="col-sm-4 col-6">
                                 <div class="design-container image-icons-wrap mb-1 {{($design->is_default == 1)?'color-active':''}}">
-                                    <div class="w-100 design back-image {{($design->is_default == 1)?'fade-image':''}}" style="background: url('{{asset('media/'.$design_type->title.'/'.$design->thumbnail)}}')"></div>
+                                    <div class="w-100 design back-image {{($design->is_default == 1)?'fade-image':''}}" style="background: url('{{asset('media/uploads/'.$design_type->title.'/'.$design->thumbnail)}}')"></div>
                                     <span class="text-white d-flex {{($design->is_default == 1)?'show-buttons':''}}">
                                         <i data-feather="check-circle" class="mr-1 check-color-option {{($design->is_default == 1)?'button-active':''}}"></i>
                                         <i data-feather="info" onclick="showFeatureModal({{$design->id}}, '{{$design_type->title}}')"></i>
@@ -142,7 +142,7 @@
             <!--Body-->
             <!-- Spinner/Loader -->
             <svg xmlns:svg="http://www.w3.org/2000/svg" id="loader" style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);opacity:0; transition: 0.3s ease opacity;" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="40px" height="40px" viewBox="0 0 128 128" xml:space="preserve"><g><linearGradient id="linear-gradient"><stop offset="0%" stop-color="#ffffff" fill-opacity="0"/><stop offset="100%" stop-color="#4d4d4d" fill-opacity="1"/></linearGradient><path d="M63.85 0A63.85 63.85 0 1 1 0 63.85 63.85 63.85 0 0 1 63.85 0zm.65 19.5a44 44 0 1 1-44 44 44 44 0 0 1 44-44z" fill="url(#linear-gradient)" fill-rule="evenodd"/><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="1080ms" repeatCount="indefinite"></animateTransform></g></svg>
-            <div class="modal-body pl-4 pb-4 custom-scroll scroll-width-thin" style="display:none">
+            <div class="modal-body pl-4 pb-4 custom-scroll scroll-width-thin" style="display:none;">
                 <div class="feature-wrapper">
                     <div class="feature-image-wrapper pb-3">
                         <img class="w-100 border border-dark" src="">
