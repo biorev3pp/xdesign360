@@ -213,7 +213,7 @@ footer p a {
 	height: calc(100% - 108px);
 	width: 140px;
 	background: #3a3b3d;
-	padding: 20px 10px;
+	padding: 20px 10px 0px;
 }
 
 /* Toggle Button */
@@ -283,6 +283,23 @@ footer p a {
 	opacity: 0;
 	z-index: 9;
 	cursor: pointer;
+}
+
+.download-action-buttons{
+	margin: 0 -10px;
+	padding: 6px 10px;
+	background: rgba(0, 0, 0, 0.4);
+}
+
+.download-action-buttons span{
+	cursor: pointer;
+	font-size: 16px;
+	color: #7c7c7c;
+	transition: 0.3s ease color;
+}
+
+.download-action-buttons span:hover{
+	color: #fff;
 }
 
 .design-options-wrapper{

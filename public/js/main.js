@@ -159,6 +159,7 @@ $('.cb-value').on('click', function() {
     var mainParent = $(this).parent('.toggle-btn');
     if($(mainParent).find('input.cb-value').is(':checked')) {
         $(mainParent).addClass('active');
+        console.log(sourcesView2);
         drawStuff(sourcesView2);
     } else {
         $(mainParent).removeClass('active');
@@ -264,6 +265,13 @@ $('.tgl').on('click', function() {
 // Color Design Click
 function selectColorOption(activeTab){
     $(activeTab).find('.check-color-option').on('click', function(){
+        var designGroupView1Value = $(this).attr('data-design-group-view1');
+        var designGroupView2Value = $(this).attr('data-design-group-view2'); 
+        var designTypeValue = $(this).attr('data-design-type'); 
+        var designView1Value = $(this).attr('data-design-view1'); 
+        var designView2Value = $(this).attr('data-design-view2'); 
+        changeLayers(designGroupView1Value, designGroupView2Value, designTypeValue, designView1Value, designView2Value);
+
         $(activeTab).find('.design-container').find('.check-color-option').removeClass('button-active');
         $(activeTab).find('.design-container').find('span').removeClass('show-buttons');
         $(activeTab).find('.design-container').find('.back-image').removeClass('fade-image');
@@ -492,3 +500,62 @@ search();
 $.each($('.content-container'), function(){
     sort(`#${$(this).attr('id')}`);
 });
+
+// Layers Click Functionality
+function changeLayers(designGroupView1, designGroupView2, designType, designView1, designView2){
+    if(designGroupView1 != ""){
+        sourcesView1.base_image_view1 = designGroupView1;
+    }
+    if(designGroupView2 != ""){
+        sourcesView2.base_image_view2 = designGroupView2;
+    }
+    if(designView1 != ""){
+        sourcesView1[designType] = designView1;
+    }
+    if(designView2 != ""){
+        sourcesView2[designType] = designView2;
+    }
+    if($('.toggle-btn').find('input.cb-value').is(':checked')) {
+        drawStuff(sourcesView2);
+    } else {
+        drawStuff(sourcesView1);
+    }
+}
+
+function downloadCanvasImage(){
+    var link = document.createElement('a');
+    link.download = 'design.png';
+    link.href = canvas.toDataURL()
+    link.click();
+}
+
+function downloadPdf(){
+    var canvasImgData = canvas.toDataURL("image/jpeg", 1.0), 
+    doc = new jsPDF(), 
+    imgProps = doc.getImageProperties(canvasImgData), 
+    pdfWidth = doc.internal.pageSize.getWidth() - 20,
+    pdfHeight = (imgProps.height * pdfWidth - 20) / imgProps.width,
+    selections = $('.design-container.color-active').find('.design'),
+    selectionValues = [], designCanvas, designCtx,i=-40;
+    doc.addImage(canvasImgData, "JPEG", 10, 10, pdfWidth, pdfHeight);
+    doc.setFontSize(12);
+    doc.text("Cabinet", 10, pdfHeight + 20);
+    doc.text("Backsplash", 50, pdfHeight + 20);
+    doc.text("Countertop", 90, pdfHeight + 20);
+    $.each(selections, function(){
+        var bg = $(this).css('background-image');
+        bg = bg.replace('url(','').replace(')','').replace(/\"/gi, "");
+        selectionValues.push(bg); 
+    });  
+    
+    loadImages(selectionValues, function(images) {
+        $.each(images, function(){
+            designCanvas = document.createElement('canvas');
+            designCtx = designCanvas.getContext('2d');
+            designCtx.drawImage(this, 0,0,300,150);
+            i=i+40;
+            doc.addImage(designCanvas.toDataURL("image/jpeg"), "JPEG", 10+i, pdfHeight + 22, 30, 40);
+        });
+        doc.save("design.pdf");
+    });
+}
