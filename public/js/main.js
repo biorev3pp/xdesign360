@@ -6,7 +6,7 @@ searchApplied = false,
 filterApplied = false, 
 items, fromPrice = 0, 
 toPrice = 1200, 
-itemsShown = [], 
+itemsShown = [], view = 'kitchen-view'
 canvas = document.getElementById('canvas'),
 ctx = canvas.getContext('2d');
 
@@ -159,11 +159,12 @@ $('.cb-value').on('click', function() {
     var mainParent = $(this).parent('.toggle-btn');
     if($(mainParent).find('input.cb-value').is(':checked')) {
         $(mainParent).addClass('active');
-        console.log(sourcesView2);
         drawStuff(sourcesView2);
+        view = 'top-view'
     } else {
         $(mainParent).removeClass('active');
         drawStuff(sourcesView1);
+        view = 'kitchen-view'
     }
 });
 
@@ -524,38 +525,59 @@ function changeLayers(designGroupView1, designGroupView2, designType, designView
 
 function downloadCanvasImage(){
     var link = document.createElement('a');
-    link.download = 'design.png';
+    link.download = `design-${view}.png`;
     link.href = canvas.toDataURL()
     link.click();
 }
 
 function downloadPdf(){
-    var canvasImgData = canvas.toDataURL("image/jpeg", 1.0), 
-    doc = new jsPDF(), 
-    imgProps = doc.getImageProperties(canvasImgData), 
-    pdfWidth = doc.internal.pageSize.getWidth() - 20,
-    pdfHeight = (imgProps.height * pdfWidth - 20) / imgProps.width,
+    var canvasImgData = canvas.toDataURL("image/jpeg", 1.0),
+    headerCanvas, headerCtx,
+    doc = new jsPDF(),
     selections = $('.design-container.color-active').find('.design'),
     selectionValues = [], designCanvas, designCtx,i=-40;
-    doc.addImage(canvasImgData, "JPEG", 10, 10, pdfWidth, pdfHeight);
+    function imageSizing(canvasImg){
+        var imgProps = doc.getImageProperties(canvasImg), 
+        pdfWidth = doc.internal.pageSize.getWidth(),
+        pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        return {pdfWidth : pdfWidth,pdfHeight: pdfHeight};
+    }
+    header();
+    doc.addImage(canvasImgData, "JPEG", 10, 40, imageSizing(canvasImgData).pdfWidth - 20, imageSizing(canvasImgData).pdfHeight -20);
     doc.setFontSize(12);
-    doc.text("Cabinet", 10, pdfHeight + 20);
-    doc.text("Backsplash", 50, pdfHeight + 20);
-    doc.text("Countertop", 90, pdfHeight + 20);
+    doc.text("Cabinet", 10, imageSizing(canvasImgData).pdfHeight+30);
+    doc.text("Backsplash", 50, imageSizing(canvasImgData).pdfHeight+30);
+    doc.text("Countertop", 90, imageSizing(canvasImgData).pdfHeight+30);
     $.each(selections, function(){
         var bg = $(this).css('background-image');
         bg = bg.replace('url(','').replace(')','').replace(/\"/gi, "");
         selectionValues.push(bg); 
     });  
-    
+
+    function header(){ 
+        headerCanvas = document.createElement('canvas');
+        headerCtx = headerCanvas.getContext('2d');
+        headerCanvas.width = 1538;
+        headerCanvas.height = 190;
+        var headerImage = new Image();
+        headerImage.src = '../media/biorev_header.png';
+        headerImage.onload = function(){
+            headerCtx.drawImage(headerImage, 0,0,1538,190);
+            var headerImageData = headerCanvas.toDataURL();
+            doc.addImage(headerImageData, "PNG", 10, 10,imageSizing(headerImageData).pdfWidth -20,imageSizing(headerImageData).pdfHeight -2.5);
+        }
+    };
+
     loadImages(selectionValues, function(images) {
         $.each(images, function(){
             designCanvas = document.createElement('canvas');
+            designCanvas.width = 79;
+            designCanvas.height = 100;
             designCtx = designCanvas.getContext('2d');
-            designCtx.drawImage(this, 0,0,300,150);
+            designCtx.drawImage(this, 0,0,79,100);
             i=i+40;
-            doc.addImage(designCanvas.toDataURL("image/jpeg"), "JPEG", 10+i, pdfHeight + 22, 30, 40);
+            doc.addImage(designCanvas.toDataURL("image/jpeg"), "JPEG", 10+i, imageSizing(canvasImgData).pdfHeight + 32, 30, 40);
         });
-        doc.save("design.pdf");
+        doc.save(`design-${view}.pdf`);
     });
 }

@@ -126,9 +126,9 @@
             </div>
         </div>
     </div>
-    <div class="download-action-buttons d-flex justify-content-start align-items-center">
-        <span class="material-icons mr-1" onclick="downloadCanvasImage()">save_alt</span>
-        <span class="material-icons" onclick="downloadPdf()">picture_as_pdf</span>
+    <div class="download-action-buttons d-flex justify-content-center align-items-center">
+        <i data-feather="download" class="mr-2" onclick="downloadCanvasImage()"></i>
+        <i data-feather="download-cloud" onclick="downloadPdf()"></i>
     </div>
 </div>
 <!-- Feature Modal  -->
