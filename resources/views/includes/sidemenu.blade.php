@@ -128,7 +128,7 @@
     </div>
     <div class="download-action-buttons d-flex justify-content-center align-items-center">
         <i data-feather="download" class="mr-2" onclick="downloadCanvasImage()"></i>
-        <i data-feather="download-cloud" onclick="downloadPdf()"></i>
+        <i data-feather="file-text" onclick="downloadPdf()"></i>
     </div>
 </div>
 <!-- Feature Modal  -->

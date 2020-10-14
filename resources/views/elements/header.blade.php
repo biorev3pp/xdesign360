@@ -22,7 +22,7 @@
                         <a class="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown">
                             <span class="mr-1 user-name text-bold-700">Hi Admin,</span>
                             <span class="avatar avatar-online">
-                                <img src="" alt="avatar"><i></i>
+                                <img src="{{asset('media/avatar.png')}}" alt="avatar"><i></i>
                             </span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">

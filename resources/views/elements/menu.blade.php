@@ -6,6 +6,9 @@
             <li class="nav-item {{ (isset($menu) && ($menu == 'home')) ?'active':''}} ">
                 <a href="{{ route('home') }}"><span class="menu-title" data-i18n="Dashboard"><i class="ft-home"></i>Dashboard</span></a>
             </li>
+            <li class="nav-item {{ (isset($menu) && ($menu == 'design-group')) ?'active':''}} ">
+                <a href="{{ route('design-group') }}"><span class="menu-title" data-i18n="Design"><i class="ft-clipboard"></i>Design Groups</span></a>
+            </li>
         </ul>
     </div>
 </div>
