@@ -21,6 +21,10 @@
                 </div>
             </div>
             <div class="content-header-right">
+                <a href="{{route('design-types')}}" class="btn btn-secondary square btn-min-width waves-effect waves-light box-shadow-2 px-2 standard-button"> 
+                    <i class="ft-arrow-left"></i>
+                    <span>Back</span>
+                </a>
                 <a href="javascript:;" onclick="designModal(false)" class="btn btn-secondary square btn-min-width waves-effect waves-light box-shadow-2 px-2 standard-button"> 
                     <i class="ft-plus"></i>
                     <span>Add New</span>

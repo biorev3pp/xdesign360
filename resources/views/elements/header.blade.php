@@ -14,7 +14,6 @@
             <div class="collapse navbar-collapse" id="navbar-mobile">
                 <ul class="nav navbar-nav mr-auto float-left">
                     <li class="nav-item">
-                        <a onclick="toggleMenu()" class="nav-link nav-menu-main menu-toggle" href="javascript:;"><i class="ft-menu"></i></a>
                     </li>
                 </ul>
                 <ul class="nav navbar-nav float-right">
@@ -67,12 +66,3 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">
-    function toggleMenu() {
-        if ($('body').hasClass('menu-open')) {
-            $('body').removeClass('menu-open').addClass('menu-hide');
-        } else {
-            $('body').addClass('menu-open').removeClass('menu-hide');
-        }
-    }
-</script>
