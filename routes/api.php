@@ -13,3 +13,5 @@ use Illuminate\Http\Request;
 |
 */
 Route::get('/get-design-info/{id}', 'API\DesignController@index');
+Route::post('/edit-design-group', 'API\DesignController@modifyDesignGroup');
+Route::post('/add-design-group', 'API\DesignController@createDesignGroup');

@@ -12,16 +12,16 @@
                             </li>
                             <li class="breadcrumb-item"><a href="{{route('design-group')}}">Kitchen</a>
                             </li>
-                            <li class="breadcrumb-item"><a href="{{route('design-types')}}">Cabinet</a>
+                            <li class="breadcrumb-item"><a href="{{route('design-types', ['design_group_id' => $design_group_id])}}" class="text-capitalize">{{$design_type_title}}</a>
                             </li>
-                            <li class="breadcrumb-item"><a href="{{route('designs')}}">Designs</a>
+                            <li class="breadcrumb-item"><a href="#">Designs</a>
                             </li>
                         </ol>
                     </div>
                 </div>
             </div>
             <div class="content-header-right">
-                <a href="{{route('design-types')}}" class="btn btn-secondary square btn-min-width waves-effect waves-light box-shadow-2 px-2 standard-button"> 
+                <a href="{{route('design-types', ['design_group_id' => $design_group_id])}}" class="btn btn-secondary square btn-min-width waves-effect waves-light box-shadow-2 px-2 standard-button"> 
                     <i class="ft-arrow-left"></i>
                     <span>Back</span>
                 </a>
@@ -35,27 +35,34 @@
 </div>
 <div class="content-wrapper">
     <div class="row">
+        @foreach($designs as $design)
         <div class="col-xl-3 col-lg-4 col-sm-6">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title text-uppercae"><b>Alpina White</b>
+                    <h4 class="card-title text-capitalize"><b>{{$design->title}}</b>
                         <div class="heading-elements">
+                            @if($design->status_id == 1)
                             <span class="badge badge-success text-uppercase">active</span>
+                            @elseif($design->status_id == 2)
+                            <span class="badge badge-danger text-uppercase">deactive</span>
+                            @endif
                         </div>
                     </h4>
                 </div>
                 <div class="card-content">
                     <div class="d-flex justify-content-center" style="position:relative;">
-                        <img class="img-fluid" src="{{asset('media/uploads/cabinet/alpina-white-cabinetry-door-sample-1_2.jpg')}}">
+                        <img class="img-fluid" src="{{asset('media/uploads/'.$design_type_slug.'/'.$design->thumbnail)}}">
+                        @if($design->is_default == 1)
                         <div class="heading-elements" style="position:absolute; bottom:0px; left:10px">
                             <span class="badge badge-success text-uppercase">default</span>
                         </div>
+                        @endif
                     </div>
                     <div class="card-body">
-                        <p class="card-text"><b>Price:</b> <span>$1,200</span> </p>
-                        <p class="card-text"><b>Material:</b> <span>Wood</span> </p>
-                        <p class="card-text"><b>Manufacturer:</b> <span>John Doe</span> </p>
-                        <p class="card-text"><b>Product ID:</b> <span>66445</span> </p>
+                        <p class="card-text text-capitalize"><b>Price:</b> <span>${{number_format($design->price)}}</span> </p>
+                        <p class="card-text text-capitalize"><b>Material:</b> <span>{{$design->material}}</span> </p>
+                        <p class="card-text text-capitalize"><b>Manufacturer:</b> <span>{{$design->manufacturer}}</span> </p>
+                        <p class="card-text text-capitalize"><b>Product ID:</b> <span>{{$design->product_id}}</span> </p>
                     </div>
                 </div>
                 <div class="card-footer border-top-blue-grey border-top-lighten-5 text-muted">
@@ -67,35 +74,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-lg-4 col-sm-6">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title text-uppercae"><b>Black</b>
-                        <div class="heading-elements">
-                            <span class="badge badge-success text-uppercase">active</span>
-                        </div>
-                    </h4>
-                </div>
-                <div class="card-content">
-                    <div class="d-flex justify-content-center" style="position:relative;">
-                        <img class="img-fluid" src="{{asset('media/uploads/cabinet/sdge-fabuwood-allure_1.jpg')}}">
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text"><b>Price:</b> <span>$500</span> </p>
-                        <p class="card-text"><b>Material:</b> <span>Wood</span> </p>
-                        <p class="card-text"><b>Manufacturer:</b> <span>John Doe</span> </p>
-                        <p class="card-text"><b>Product ID:</b> <span>66445</span> </p>
-                    </div>
-                </div>
-                <div class="card-footer border-top-blue-grey border-top-lighten-5 text-muted">
-                    <span class="float-left">Updated On: 06.07.2020</span>
-                    <span class="float-right">
-                        <a href="javascript:;" onclick="designModal(true)" data-toggle="tooltip" title="Edit Design Group" class="text-dark mr-25"> <i class="ft-edit"></i> </a>
-                        <a href="javascript:;" onclick="deleteSwal()" data-toggle="tooltip" title="Delete Design Group" class="text-dark mr-25"> <i class="ft-trash-2"></i> </a>
-                    </span>
-                </div>
-            </div>
-        </div>
+        @endforeach
     </div>
 </div>
 <div class="modal fade text-left" id="addDesignModal" tabindex="-1" role="dialog">

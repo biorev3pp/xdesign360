@@ -27,28 +27,34 @@
 </div>
 <div class="content-wrapper">
     <div class="row">
+        @foreach($design_groups as $design_group)
         <div class="col-xl-3 col-lg-4 col-sm-6">
-            <div class="card">
+            <div class="card" id="card{{$design_group->id}}">
                 <div class="card-header">
-                    <h4 class="card-title text-uppercae"><b>Kitchen</b>
+                    <h4 class="card-title text-capitalize"><b>{{$design_group->title}}</b>
                         <div class="heading-elements">
-                            <span class="badge badge-success text-uppercase">active</span>
+                            @if($design_group->status_id == 1)
+                                <span class="badge badge-success text-uppercase">active</span>
+                            @elseif($design_group->status_id == 0)
+                                <span class="badge badge-danger text-uppercase">deactive</span>
+                            @endif
                         </div>
                     </h4>
                 </div>
                 <div class="card-content">
-                    <img class="img-fluid" src="{{asset('media/uploads/base_image1.png')}}">
+                    <img class="img-fluid" src="{{asset('media/uploads/'.$design_group->base_image_view1)}}">
                 </div>
                 <div class="card-footer border-top-blue-grey border-top-lighten-5 text-muted">
-                    <span class="float-left">Updated On: 06.07.2020</span>
+                    <span class="float-left">Updated On: {{date('d-m-Y',strtotime($design_group->created_at))}}</span>
                     <span class="float-right">
-                        <a href="{{route('design-types')}}" data-toggle="tooltip" title="View Design Types" class="text-dark mr-25"> <i class="ft-eye"></i> </a>
-                        <a href="javascript:;" onclick="designGroupModal(true)" data-toggle="tooltip" title="Edit Design Group" class="text-dark mr-25"> <i class="ft-edit"></i> </a>
+                        <a href="{{route('design-types',['design_group_id' => base64_encode($design_group->id)])}}" data-toggle="tooltip" title="View Design Types" class="text-dark mr-25"> <i class="ft-eye"></i> </a>
+                        <a href="javascript:;" onclick="designGroupModal(true, '{{$design_group->title}}', '{{$design_group->status_id}}', '{{$design_group->base_image_view1}}', '{{$design_group->base_image_view2}}',{{$design_group->id}})" data-toggle="tooltip" title="Edit Design Group" class="text-dark mr-25 edit-button"> <i class="ft-edit"></i> </a>
                         <a href="javascript:;" onclick="deleteSwal()" data-toggle="tooltip" title="Delete Design Group" class="text-dark mr-25"> <i class="ft-trash-2"></i> </a>
                     </span>
                 </div>
             </div>
         </div>
+        @endforeach
     </div>
 </div>
 <div class="modal fade text-left" id="addDesignGroupModal" tabindex="-1" role="dialog">
@@ -64,40 +70,40 @@
                 <div class="modal-body">
                     <div class="form-group">
                     <label class="text-uppercase">Title</label>
-                        <input name="title" class="form-control border" type="text" placeholder="Enter title" required>
+                        <input name="title" id="title" class="form-control border" type="text" placeholder="Enter title" required>
                     </div>
                     <div class="form-group d-flex flex-wrap justify-content-start">
                         <div class="mr-2">
-                            <label for="image" class="text-uppercase mb-1">View 1 Base Image</label>
+                            <label class="text-uppercase mb-1">View 1 Base Image</label>
                             <figure class="position-relative w-150 mb-0">
                                 <img src="{{asset('media/placeholder.jpg')}}" class="img-thumbnail">
-                                <input type="file" id="file1" class="d-none" onchange="readUrl(this)">
-                                <label class="btn btn-sm btn-secondary in-block m-0" style="padding:0.59375rem 1rem" for="file1"> <i class="ft-image"></i> Choose Image</label>
+                                <input type="file" id="view1Image" class="d-none" onchange="readUrl(this)">
+                                <label class="btn btn-sm btn-secondary in-block m-0" style="padding:0.59375rem 1rem" for="view1Image"> <i class="ft-image"></i> Choose Image</label>
                             </figure>
                         </div>
                         <div>
-                            <label for="image" class="text-uppercase mb-1">View 2 Base Image</label>
+                            <label class="text-uppercase mb-1">View 2 Base Image</label>
                             <figure class="position-relative w-150 mb-0">
                                 <img src="{{asset('media/placeholder.jpg')}}" class="img-thumbnail">
-                                <input type="file" id="file2" class="d-none" onchange="readUrl(this)">
-                                <label class="btn btn-sm btn-secondary in-block m-0" style="padding:0.59375rem 1rem" for="file2"> <i class="ft-image"></i> Choose Image</label>
+                                <input type="file" id="view2Image" class="d-none" onchange="readUrl(this)">
+                                <label class="btn btn-sm btn-secondary in-block m-0" style="padding:0.59375rem 1rem" for="view2Image"> <i class="ft-image"></i> Choose Image</label>
                             </figure>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="d-inline-block mr-1 text-uppercase m-0">Activate </label>
                         <div class="d-inline-block custom-control custom-radio mr-1">
-                            <input type="radio" name="status" class="custom-control-input" id="yes1" value="publish">
+                            <input type="radio" name="status" class="custom-control-input" id="yes1" value="1">
                             <label class="custom-control-label" for="yes1">Yes</label>
                         </div>
                         <div class="d-inline-block custom-control custom-radio">
-                            <input type="radio"name="status" class="custom-control-input" id="no1" value="pending">
+                            <input type="radio"name="status" class="custom-control-input" id="no1" value="0" checked>
                             <label class="custom-control-label" for="no1">No</label>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-dark text-white m-0">Save Changes</button>
+                    <button type="button" id="submitButton" onclick="submitForm(true)" data-id="" class="btn btn-dark text-white m-0">Save Changes</button>
                 </div>
             </form>
         </div>
@@ -106,11 +112,23 @@
 @endsection
 @push('scripts')
 <script>
-    function designGroupModal(editable){
-        var modal = $('#addDesignGroupModal');
-        if(editable == true){
+    const path = '{{asset("media/uploads")}}';
+    function designGroupModal(...values){
+        const modal = $('#addDesignGroupModal');
+        if(values[0] == true){
             modal.find('.modal-title').text('Edit Design Group')
             modal.find('.modal-footer button').text('Save Changes')
+            const radioButtons = $('#designForm input[name="status"]');
+            modal.find('#title').val(values[1]);
+            $.each(radioButtons, function(){
+                if($(this).val() == values[2]){
+                    $(this).prop('checked', true);
+                }
+            });
+            modal.find('#view1Image').prev().attr('src', `${path}/${values[3]}`);
+            modal.find('#view2Image').prev().attr('src', `${path}/${values[4]}`);
+            modal.find('#submitButton').attr('data-id', values[5]);
+            modal.find('#submitButton').attr('onclick', 'submitForm(true)');
             modal.modal('show');
         }
         else{
@@ -118,10 +136,96 @@
             modal.find('.modal-title').text('Add New Design Group')
             modal.find('.modal-footer button').text('Add New')
             modal.find('.img-thumbnail').attr('src', '{{asset("media/placeholder.jpg")}}')
+            modal.find('#submitButton').attr('data-id', '');
+            modal.find('#submitButton').attr('onclick', 'submitForm(false)');
             form.reset();
             modal.modal('show');
         }
     }
+
+    function submitForm(editable){
+        const title = $('#title').val();
+        const status = $('input[name="status"]:checked').val();
+        const view1BaseImage = $("#view1Image").prop('files')[0];
+        const view2BaseImage = $("#view2Image").prop('files')[0];
+        const formData = new FormData();
+
+        formData.append('title', title);
+        formData.append('status', status);
+        formData.append('view1_base_image', view1BaseImage);
+        formData.append('view2_base_image', view2BaseImage);
+
+        if(title == ''){
+            toastr.error('Title Field is required');
+            return false;
+        }
+
+        if(editable == true){
+            const designGroupId = $("#submitButton").attr('data-id');
+            formData.append('design_group_id', designGroupId);
+
+            $.ajax({
+                type: 'post',
+                url: '/api/edit-design-group',
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response){
+                    const parent = $(`#card${response.id}`);
+                    parent.find('.card-title b').text(response.title);
+                    parent.find('.card-content .img-fluid').attr('src',`${path}/${response.base_image_view1}`);
+                    if(response.status_id == 1){
+                        parent.find('.heading-elements').html('<span class="badge badge-success text-uppercase">active</span>');
+                    }
+                    else if(response.status_id == 0){
+                        parent.find('.heading-elements').html('<span class="badge badge-danger text-uppercase">deactive</span>');
+                    }
+
+                    parent.find('.edit-button').attr('onclick', `designGroupModal(true, '${response.title}', '${response.status_id}', '${response.base_image_view1}', '${response.base_image_view2}', ${response.id})`);
+                    $('#addDesignGroupModal').modal('hide');
+                }
+            });
+        }
+        else{
+            $.ajax({
+                type: 'post',
+                url: '/api/add-design-group',
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response){
+                    let card = null;
+                    card = `<div class="col-xl-3 col-lg-4 col-sm-6">
+                                <div class="card" id="card${response.id}">
+                                    <div class="card-header">
+                                        <h4 class="card-title text-capitalize"><b>${response.title}</b>
+                                            <div class="heading-elements">
+                                                ${(response.status_id == 1)?'<span class="badge badge-success text-uppercase">active</span>':'<span class="badge badge-danger text-uppercase">deactive</span>'}
+                                            </div>
+                                        </h4>
+                                    </div>
+                                    <div class="card-content">
+                                        <img class="img-fluid" src="${path}/${response.base_image_view1}">
+                                    </div>
+                                    <div class="card-footer border-top-blue-grey border-top-lighten-5 text-muted">
+                                        <span class="float-left">Updated On: ${response.updated_at}</span>
+                                        <span class="float-right">
+                                            <a href="/admin/design-groups/design-types/${btoa(response.id)}" data-toggle="tooltip" title="View Design Types" class="text-dark mr-25"> <i class="ft-eye"></i> </a>
+                                            <a href="javascript:;" onclick="designGroupModal(true, '${response.title}', '${response.status_id}', '${response.base_image_view1}', '${response.base_image_view2}',${response.id})" data-toggle="tooltip" title="Edit Design Group" class="text-dark mr-25 edit-button"> <i class="ft-edit"></i> </a>
+                                            <a href="javascript:;" onclick="deleteSwal()" data-toggle="tooltip" title="Delete Design Group" class="text-dark mr-25"> <i class="ft-trash-2"></i> </a>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>`;
+                    $('.content-wrapper .row').append(card);
+                    $('#addDesignGroupModal').modal('hide');
+                }
+            });
+        }
+    }
+
     function readUrl(input) {
         if (input.files && input.files[0]) 
         {

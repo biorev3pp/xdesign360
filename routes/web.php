@@ -14,7 +14,7 @@ Auth::routes();
 Route::get('/', 'IndexController@index');
 Route::group(['prefix' => 'admin', 'middleware'=>'auth'], function () { 
     Route::get('/dashboard', function() { return view('admin.dashboard')->with('menu', 'home'); })->name('home')->defaults('menu', 'dashboard');
-    Route::get('/design-groups', function() { return view('admin.design-groups')->with('menu', 'design-group'); })->name('design-group')->defaults('menu', 'design-group');
-    Route::get('/design-groups/design-types', function() { return view('admin.design-types')->with('menu', 'design-group'); })->name('design-types')->defaults('menu', 'design-group');
-    Route::get('/design-groups/design-types/designs', function() { return view('admin.designs')->with('menu', 'design-group'); })->name('designs')->defaults('menu', 'design-group');
+    Route::get('/design-groups', 'Admin\DesignController@designGroups')->name('design-group')->defaults('menu', 'design-group');
+    Route::get('/design-groups/design-types/{design_group_id}', 'Admin\DesignController@designTypes')->name('design-types')->defaults('menu', 'design-group');
+    Route::get('/design-groups/design-types/designs/{design_type_id}/{design_group_id}', 'Admin\DesignController@designs')->name('designs')->defaults('menu', 'design-group');
 });

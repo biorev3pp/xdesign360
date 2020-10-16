@@ -12,7 +12,7 @@
                             </li>
                             <li class="breadcrumb-item"><a href="{{route('design-group')}}">Kitchen</a>
                             </li>
-                            <li class="breadcrumb-item"><a href="{{route('design-types')}}">Design Types</a>
+                            <li class="breadcrumb-item"><a href="#">Design Types</a>
                             </li>
                         </ol>
                     </div>
@@ -33,72 +33,34 @@
 </div>
 <div class="content-wrapper">
     <div class="row">
+        @foreach($design_types as $design_type)
         <div class="col-xl-3 col-lg-4 col-sm-6">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title text-uppercae"><b>Cabinet</b>
+                    <h4 class="card-title text-capitalize"><b>{{$design_type->title}}</b>
                         <div class="heading-elements">
-                            <span class="badge badge-success text-uppercase">active</span>
+                            @if($design_type->status_id == 1)
+                                <span class="badge badge-success text-uppercase">active</span>
+                            @elseif($design_type->status_id == 2)
+                                <span class="badge badge-danger text-uppercase">deactive</span>
+                            @endif
                         </div>
                     </h4>
                 </div>
                 <div class="card-content d-flex justify-content-center">
-                    <img class="img-fluid" src="{{asset('media/cabinet_icon.png')}}">
+                    <img class="img-fluid" src="{{asset('media/'.$design_type->thumbnail)}}">
                 </div>
                 <div class="card-footer border-top-blue-grey border-top-lighten-5 text-muted">
-                    <span class="float-left">Updated On: 06.07.2020</span>
+                    <span class="float-left">Updated On: {{date('d-m-Y',strtotime($design_type->created_at))}}</span>
                     <span class="float-right">
-                        <a href="{{route('designs')}}" data-toggle="tooltip" title="View Designs" class="text-dark mr-25"> <i class="ft-eye"></i> </a>
+                        <a href="{{route('designs', ['design_type_id' => base64_encode($design_type->id), 'design_group_id' => $design_group_id])}}" data-toggle="tooltip" title="View Designs" class="text-dark mr-25"> <i class="ft-eye"></i> </a>
                         <a href="javascript:;" onclick="designTypeModal(true)" data-toggle="tooltip" title="Edit Design Type" class="text-dark mr-25"> <i class="ft-edit"></i> </a>
                         <a href="javascript:;" onclick="deleteSwal();" data-toggle="tooltip" title="Delete Design Type" class="text-dark mr-25"> <i class="ft-trash-2"></i> </a>
                     </span>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-lg-4 col-sm-6">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title text-uppercae"><b>Backsplash</b>
-                        <div class="heading-elements">
-                            <span class="badge badge-success text-uppercase">active</span>
-                        </div>
-                    </h4>
-                </div>
-                <div class="card-content d-flex justify-content-center">
-                    <img class="img-fluid" src="{{asset('media/backsplash_icon.png')}}">
-                </div>
-                <div class="card-footer border-top-blue-grey border-top-lighten-5 text-muted">
-                    <span class="float-left">Updated On: 06.07.2020</span>
-                    <span class="float-right">
-                        <a href="{{route('designs')}}" data-toggle="tooltip" title="View Designs" class="text-dark mr-25"> <i class="ft-eye"></i> </a>
-                        <a href="javascript:;" onclick="designTypeModal(true)" data-toggle="tooltip" title="Edit Design Type" class="text-dark mr-25"> <i class="ft-edit"></i> </a>
-                        <a href="javascript:;" onclick="deleteSwal();" data-toggle="tooltip" title="Delete Design Type" class="text-dark mr-25"> <i class="ft-trash-2"></i> </a>
-                    </span>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-lg-4 col-sm-6">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title text-uppercae"><b>Countertop</b>
-                        <div class="heading-elements">
-                            <span class="badge badge-success text-uppercase">active</span>
-                        </div>
-                    </h4>
-                </div>
-                <div class="card-content d-flex justify-content-center">
-                    <img class="img-fluid" src="{{asset('media/countertop_icon.png')}}">
-                </div>
-                <div class="card-footer border-top-blue-grey border-top-lighten-5 text-muted">
-                    <span class="float-left">Updated On: 06.07.2020</span>
-                    <span class="float-right">
-                        <a href="{{route('designs')}}" data-toggle="tooltip" title="View Designs" class="text-dark mr-25"> <i class="ft-eye"></i> </a>
-                        <a href="javascript:;" onclick="designTypeModal(true)" data-toggle="tooltip" title="Edit Design Type" class="text-dark mr-25"> <i class="ft-edit"></i> </a>
-                        <a href="javascript:;" onclick="deleteSwal();" data-toggle="tooltip" title="Delete Design Type" class="text-dark mr-25"> <i class="ft-trash-2"></i> </a>
-                    </span>
-                </div>
-            </div>
-        </div>
+        @endforeach
     </div>
 </div>
 <div class="modal fade text-left" id="addDesignTypeModal" tabindex="-1" role="dialog">

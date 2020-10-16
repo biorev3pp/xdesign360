@@ -1,14 +1,16 @@
 feather.replace()
 
 // Global Variables
-var openMenu = true, 
+var openMenu = true, filterMinPrice, filterMaxPrice,
 searchApplied = false, 
 filterApplied = false, 
 items, fromPrice = 0, 
 toPrice = 1200, 
 itemsShown = [], view = 'kitchen-view'
 canvas = document.getElementById('canvas'),
-ctx = canvas.getContext('2d');
+ctx = canvas.getContext('2d'), 
+allContent = $('.content-container').find('.design-container').next(),
+filterContent = [];
 
 //Price Formatter
 var formatter = new Intl.NumberFormat('en-US', {
@@ -317,80 +319,38 @@ function showFeatureModal(designId, designType){
     });
 }
 
-// Search Function
-function search() {
-    $('#searchInput').on('input', function(){
-        var input, textValue;
-        input = document.getElementById('searchInput').value.toUpperCase();
-        if(!filterApplied){
-            itemsShown = [];
-            if(input != ''){
-                searchApplied = true;
-                items = $('.content-container').find('.design-container').next();
-                $.each(items, function(){
-                    textValue = $(this).text();
-                    var parent = $(this).parent();
-                    if (textValue.toUpperCase().indexOf(input) > -1) {
-                        parent.show();
-                        itemsShown.push(this);
-                    } else {
-                        parent.hide();
-                    }
-                });
-            }
-            else{
-                searchApplied = false;
-                filter(fromPrice, toPrice);
-            }
-        }
-        else{
-            if(input != ''){
-                searchApplied = true;
-                items = itemsShown;
-                $.each(items, function(){
-                    textValue = $(this).text();
-                    var parent = $(this).parent();
-                    if (textValue.toUpperCase().indexOf(input) > -1) {
-                        parent.show();
-                    } else {
-                        parent.hide();
-                    }
-                });
-            }
-            else{
-                searchApplied = false;
-                filter(fromPrice, toPrice);
-            }
-        }
-    });
+// Filters Functionality
+function showFilteredData(){
+    let values = filterData();
+    $(allContent).parent().hide();
+    $.each(values,function(){
+        $(this).parent().show();
+    })
 }
 
-// Filter function
-function filter(min, max){
-    if(!searchApplied){
-        items = $('.content-container').find('.design-container').next();
-        itemsShown = [];
-        $.each(items, function(){
-            var parent = $(this).parent();
-            if (Number(this.getAttribute('data-price')) >= min && Number(this.getAttribute('data-price')) <= max) {
-                parent.show();
-                itemsShown.push(this);
-            } else {
-                parent.hide();
+function filterData(){
+    let searchArray =[], filteredArray = [], textValue;
+    var commonValues = allContent;
+    let search = document.getElementById('searchInput').value.toUpperCase();
+    if(search != ''){
+        $.each(allContent, function(){
+            textValue = $(this).text();
+            if (textValue.toUpperCase().indexOf(search) > -1) {
+                searchArray.push(this);
             }
         });
+        commonValues = _.intersection(allContent, searchArray);
+        if(commonValues.length==0){
+            return commonValues;
+        }
     }
-    else{
-        items = itemsShown;
-        $.each(items, function(){
-            var parent = $(this).parent();
-            if (Number(this.getAttribute('data-price')) >= min && Number(this.getAttribute('data-price')) <= max) {
-                parent.show();
-            } else {
-                parent.hide();
-            }
-        });
-    }   
+    $.each(allContent, function(){
+        if (Number(this.getAttribute('data-price')) >= filterMinPrice && Number(this.getAttribute('data-price')) <= filterMaxPrice) {
+            filteredArray.push(this);
+        } 
+    });
+    commonValues = _.intersection(commonValues,filteredArray);
+    return commonValues;
 }
 
 //Price Filter
@@ -410,7 +370,9 @@ $('.price-filter').ionRangeSlider({
         $(".price-badge").html(`${formatter.format(data.from)} - ${formatter.format(data.to)}`);
         
         // Call filter funtion
-        filter(data.from, data.to);
+        filterMinPrice = data.from;
+        filterMaxPrice = data.to;
+        showFilteredData();
     },
     onChange: function (data) {
         fromPrice = data.from;
@@ -420,8 +382,9 @@ $('.price-filter').ionRangeSlider({
         $(".price-badge").html(`${formatter.format(data.from)} - ${formatter.format(data.to)}`);
         
         // Call filter funtion
-        filter(data.from, data.to);
-        filterApplied = true;
+        filterMinPrice = data.from;
+        filterMaxPrice = data.to;
+        showFilteredData();
     },
 });
 
@@ -493,9 +456,6 @@ function sort(activeTab) {
         }
     });
 }
-
-// Call search function
-search();
 
 // Call sort function
 $.each($('.content-container'), function(){

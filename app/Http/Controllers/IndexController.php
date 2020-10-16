@@ -51,6 +51,9 @@ class IndexController extends Controller
         }
         $this->data['sources1'] = $sources1;
         $this->data['sources2'] = $sources2;
+
+        $this->data['min_price'] = Designs::where('design_group_id', 1)->get()->min('price');
+        $this->data['max_price'] = Designs::where('design_group_id', 1)->get()->max('price');
         return view('index')->with($this->data);
     }
 }
