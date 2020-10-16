@@ -20,7 +20,7 @@
                     <i id="closeMenu" data-feather="x-circle"></i>
                 </div>
                 <div class="content-actions-wrap justify-content-between">
-                    <input type="text" id="searchInput" placeholder="Search">
+                    <input type="text" onkeyup="showFilteredData()" id="searchInput" placeholder="Search">
                     <div class="content-actions-icons-wrap">
                         <i id="searchIcon" data-feather="search"></i>
                         <i id="filterIcon" data-feather="filter"></i>
