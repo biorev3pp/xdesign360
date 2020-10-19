@@ -25,7 +25,7 @@
                             </span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="">
+                            <a class="dropdown-item" href="{{route('profile')}}">
                                 <i class="material-icons">person_outline</i> Profile
                             </a>
                             <div class="dropdown-divider"></div>

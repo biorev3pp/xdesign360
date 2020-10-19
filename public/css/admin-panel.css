@@ -22621,7 +22621,7 @@
         transition: 300ms ease all;
         -webkit-backface-visibility: hidden;
                 backface-visibility: hidden;
-        min-height: calc(100% - 3.2rem); }
+        min-height: calc(100% - 38px); }
         html body .content.app-content {
           overflow-x: hidden; }
           html body .content.app-content.show-overlay .content-overlay {
@@ -48089,10 +48089,6 @@
       opacity: 1;
     }
   
-    .header-navbar.navbar-brand-center .navbar-header {
-      width: 49px !important;
-    }
-  
     .menu-open .header-navbar.navbar-brand-center .navbar-header {
       width: 265px !important;
     }
@@ -48114,6 +48110,9 @@
       overflow-y: unset;
       height: auto;
     }
+    .main-menu.menu-fixed{
+      height: calc(100% - 7.14rem);
+    }
   }
   
   @media (max-width: 768px) {
@@ -48124,7 +48123,7 @@
   
   @media (max-width: 540px) {
     .main-menu.menu-fixed {
-      height: calc(100% - 7rem);
+      height: calc(100% - 6.13rem);
     }
   
     .header-navbar.navbar-brand-center .navbar-header {
@@ -48165,7 +48164,6 @@
 
 body{
     font-family: calibri,sans-serif!important;
-    overflow:hidden;
 }
 label, legend{
     font-weight: 400;
@@ -48191,8 +48189,30 @@ footer p {
 	margin: 0;
   line-height: 1;
   letter-spacing: 0px;
+  text-align: left;
 }
 
 footer p a {
 	color: #9fcc3a;
+}
+
+@media (max-width: 991px){
+  footer {
+    height: 30px;
+  }
+}
+
+@media (max-width: 555px){
+  footer {
+    padding: 0 10px;
+  }
+  footer p {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 351px){
+  footer p {
+    font-size: 9px;
+  }
 }
