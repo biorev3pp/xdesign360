@@ -42,11 +42,11 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="name" class="text-uppercase mb-1">Your Name</label>
-                                        <input type="text" id="name" class="form-control" placeholder="Your Name" value="{{$admin->name}}">
+                                        <input type="text" id="name" class="form-control" placeholder="Your Name" value="{{$admin->name}}" required>
                                     </div>
                                     <div class="form-group">
                                         <label for="mobile" class="text-uppercase mb-1">Contact</label>
-                                        <input type="number" id="contact" class="form-control" placeholder="Your contact" value="{{$admin->mobile}}">
+                                        <input type="number" id="contact" class="form-control" placeholder="Your contact" value="{{$admin->mobile}}" required>
                                     </div>
                                     <div class="form-group d-flex flex-sm-row flex-column justify-content-end mt-1">
                                         <button type="submit" class="btn btn-dark glow mb-1 mb-sm-0 mr-0 mr-sm-1 waves-effect waves-light">Save changes</button>
@@ -67,15 +67,15 @@
                                 <div class="card-body p-2">
                                     <div class="form-group">
                                         <label class="text-uppercase mb-1">Old Password</label>
-                                        <input type="password" class="form-control" placeholder="Enter your old password" name="old_password">
+                                        <input type="password" class="form-control" placeholder="Enter your old password" name="old_password" required>
                                     </div>
                                     <div class="form-group">
                                         <label class="text-uppercase mb-1">New Password</label>
-                                        <input type="password" class="form-control" placeholder="Enter your password" name="new_password">
+                                        <input type="password" class="form-control" placeholder="Enter your password" name="new_password" required>
                                     </div>
                                     <div class="form-group">
                                         <label class="text-uppercase mb-1">Confirm New Password</label>
-                                        <input type="password" class="form-control" placeholder="Re-enter your password" name="confirm_password">
+                                        <input type="password" class="form-control" placeholder="Re-enter your password" name="confirm_password" required>
                                     </div>
                                     <div class="form-group d-flex flex-sm-row flex-column justify-content-end mt-1">
                                         <button type="submit" class="btn btn-dark glow mb-1 mb-sm-0 mr-0 mr-sm-1 waves-effect waves-light">Update Password</button>
@@ -131,6 +131,11 @@ $(document).ready(function () {
             success: function(response){
                 toastr.clear();
                 toastr.success("Password Updated Successfully");
+                const form = document.getElementById('updatePasswordForm');
+                form.reset();
+            },
+            error: function(error){
+                toastr.error(error.responseJSON);
             }
         });
     });

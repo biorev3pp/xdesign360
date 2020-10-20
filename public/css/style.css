@@ -213,7 +213,7 @@ footer p a {
 	height: calc(100% - 108px);
 	width: 140px;
 	background: #3a3b3d;
-	padding: 20px 10px 0px;
+	padding: 20px 10px 10px;
 }
 
 /* Toggle Button */
@@ -235,28 +235,9 @@ footer p a {
 	background: no-repeat 10px center #cc673a;
 }
 
-.toggle-btn::before{
-	content: "KITCHEN VIEW";
-	position: absolute;
-	right: 10px;
-	font-size: 12px;
-	color: #fff;
-	top: 4px;
-	opacity: 1;
-}
-
 .toggle-btn.active .round-btn {
 	left: calc(100% - 2px);
 	transform: translate(-100%,0);
-}
-
-.toggle-btn.active::before{
-	content: "TOP VIEW";
-	position: absolute;
-	left: 25px;
-	font-size: 12px;
-	color: #fff;
-	top: 4px;
 }
 
 .toggle-btn .round-btn {
@@ -286,10 +267,38 @@ footer p a {
 	cursor: pointer;
 }
 
-.download-action-buttons{
-	margin: 0 -10px;
+
+.download-action-wrap{
+	margin: 0;
+	background: #9fcc3a;
+	border-radius: 50px;
+	color: #fff;
+	width: 100%;
 	padding: 6px 10px;
-	background: rgba(0, 0, 0, 0.4);
+	outline: none;
+	text-transform: uppercase;
+	line-height: 1;
+	z-index: 1;
+}
+
+.download-action-wrap p{
+	font-size: 12px;
+	color: #fff;
+	cursor: pointer;
+}
+
+.download-action-buttons{
+	position: relative;
+	top: 25px;
+	opacity: 0;
+	pointer-events: none;
+	transition: 0.4s ease all;
+}
+
+.download-action-buttons.show-action-buttons{
+	top: -7px;
+	opacity: 1;
+	pointer-events: unset;
 }
 
 .download-action-buttons svg{
@@ -1093,15 +1102,15 @@ svg.button-active{
 	}
 
 	.toggle-btn::before{
-		font-size: 9px;
-		right: 4px;
-		top: 6.2px;
+		font-size: 9px !important;
+		right: 4px !important;
+		top: 6.2px !important;
 	}
 
 	.toggle-btn.active::before{
-		font-size: 9px;
-		left: 16px;
-		top: 6.2px;
+		font-size: 9px !important;
+		left: 16px !important;
+		top: 6.2px !important;
 	}
 
 	.sidemenu.extended{

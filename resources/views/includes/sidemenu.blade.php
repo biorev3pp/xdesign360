@@ -1,3 +1,24 @@
+<style>
+    .toggle-btn::before{
+        content: "{{$design_group->view1_title}} view";
+        text-transform: uppercase;
+        position: absolute;
+        right: 10px;
+        font-size: 12px;
+        color: #fff;
+        top: 4px;
+        opacity: 1;
+    }
+    .toggle-btn.active::before{
+        content: "{{$design_group->view2_title}} view";
+        text-transform: uppercase;
+        position: absolute;
+        left: 25px;
+        font-size: 12px;
+        color: #fff;
+        top: 4px;
+    }
+</style>
 <div class="sidemenu custom-scroll scroll-width-thin d-flex flex-column justify-content-between" id="sideMenu">
     <div>
         <div class="toggle-btn">
@@ -126,9 +147,15 @@
             </div>
         </div>
     </div>
-    <div class="download-action-buttons d-flex justify-content-center align-items-center">
-        <i data-feather="download" class="mr-2" onclick="downloadCanvasImage()"></i>
-        <i data-feather="file-text" onclick="downloadPdf()"></i>
+    <div class="download-action-container d-flex flex-column align-items-center">
+        <div class="download-action-buttons">
+            <i data-feather="download" class="mr-2" onclick="downloadCanvasImage()"></i>
+            <i data-feather="file-text" onclick="downloadPdf()"></i>
+        </div>
+        <div class="download-action-wrap text-center">
+            <p class="m-0">Download</p>
+        </div>
+        
     </div>
 </div>
 <!-- Feature Modal  -->

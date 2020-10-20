@@ -1,22 +1,13 @@
 @extends('layouts.inner')
 @section('content')
-<div class="content-header row">
-    <div class="content-header-light col-12">
-        <div class="row align-items-center">
-            <div class="content-header-left col-md-9 col-12 mb-2">
-                <h3 class="content-header-title">Dashboard</h3>
-                <div class="row breadcrumbs-top">
-                    <div class="breadcrumb-wrapper col-12">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="/admin/dashboard">Home</a>
-                            </li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-            <div class="content-header-right col-md-3 col-12">
-                <div class="float-md-right pt-20">
-                </div>
+<div class="content-header d-flex flex-wrap bg-white" style="padding: 0.8rem 2rem 0.4rem;">
+    <div class="content-header-left p-0">
+        <h3 class="content-header-title m-0 mr-1">Dashboard</h3>
+        <div class="row breadcrumbs-top">
+            <div class="breadcrumb-wrapper pl-1">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin/dashboard">Home</a></li>
+                </ol>
             </div>
         </div>
     </div>

@@ -18,7 +18,12 @@
 <!-- END: Main Menu-->
 @push('scripts');
 <script type="text/javascript">
-    $('body').addClass('menu-open');
+    if(window.innerWidth > 768){
+        $('body').addClass('menu-open');
+    }
+    else{
+        $('body').addClass('menu-hide');
+    }
     function toggleMenu() {
         if ($('body').hasClass('menu-open')) {
             $('body').removeClass('menu-open').addClass('menu-hide');

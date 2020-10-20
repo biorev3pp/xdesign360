@@ -19,6 +19,7 @@ class DesignController extends Controller
 
     public function createDesignGroup(Request $request)
     {
+        dd("test");
         $destination_path = public_path('media/uploads');
         if($request->file('view1_base_image'))
         {
@@ -36,7 +37,7 @@ class DesignController extends Controller
         {
             $view2_file = $request->file('view2_base_image');
             $view2_name = $view2_file->getClientOriginalName();
-            $view2_file->move($destinationPath, $view2_name);
+            $view2_file->move($destination_path, $view2_name);
         }
 
         else
@@ -48,6 +49,8 @@ class DesignController extends Controller
         {
             $design_group = DesignGroups::create([
                 'title'             => $request->title,
+                'view1_title'       => $request->view1_title,
+                'view2_title'       => $request->view2_title,
                 'base_image_view1'  => ($view1_name)?$view1_name:'',
                 'base_image_view2'  => ($view2_name)?$view2_name:'',
                 'status_id'         => $request->status
@@ -63,6 +66,16 @@ class DesignController extends Controller
         if($request->title)
         {
             $design_group->title = $request->title;
+        }
+
+        if($request->view1_title)
+        {
+            $design_group->view1_title = $request->view1_title;
+        }
+
+        if($request->view2_title)
+        {
+            $design_group->view2_title = $request->view2_title;
         }
         
         $design_group->status_id = $request->status;
@@ -158,7 +171,6 @@ class DesignController extends Controller
     public function createDesign(Request $request)
     {   
         $destination_path = public_path('media/uploads/'.$request->design_type_slug);
-
         if($request->file('thumbnail'))
         {
             $thumbnail_file = $request->file('thumbnail');
@@ -197,7 +209,7 @@ class DesignController extends Controller
 
         if($request->file('open_view_image'))
         {
-            $open_view_image_file = $request->file('view2_image');
+            $open_view_image_file = $request->file('open_view_image');
             $open_view_image_name = $open_view_image_file->getClientOriginalName();
             $open_view_image_file->move($destination_path, $open_view_image_name);
         }
@@ -218,22 +230,11 @@ class DesignController extends Controller
                 'image_view1'       => ($view1_image_name)?$view1_image_name:'',
                 'image_view2'       => ($view2_image_name)?$view2_image_name:'',
                 'open_view_image'   => ($open_view_image_name)?$open_view_image_name:'',
-                'is_default'        => $request->is_default,
                 'price'             => $request->price,
                 'material'          => $request->material,
                 'manufacturer'      => $request->manufacturer,
                 'product_id'        => $request->product_id,
                 'status_id'         => $request->status
-            ]);
-        }
-
-        if($design->is_default == 1)
-        {
-            Designs::where([
-                'is_default'        => 1,
-                'design_type_id'    => $design->design_type_id
-            ])->update([
-                'is_default' => 0
             ]);
         }
         return $design;
@@ -266,17 +267,6 @@ class DesignController extends Controller
         if($request->product_id)
         {
             $design->product_id = $request->product_id;
-        }
-
-        if($request->is_default == 1)
-        {
-            Designs::where([
-                'is_default'        => 1,
-                'design_type_id'    => base64_decode($request->design_type_id)
-            ])->update([
-                'is_default' => 0
-            ]);
-            $design->is_default = $request->is_default;
         }
 
         $design->status_id = $request->status;
@@ -318,9 +308,27 @@ class DesignController extends Controller
         return $design;
     }
 
-    public function deleteDesign(Request $request){
+    public function deleteDesign(Request $request)
+    {
         $design = Designs::find($request->design_id);
+        if($design->is_default == 1){
+            return response()->json('Cannot delete default design.', 422); 
+        }
         $design->status_id = 2;
+        $design->save();  
+    }
+
+    public function updateDefault(Request $request)
+    {
+        $design = Designs::find($request->design_id);
+        if($design->status_id != 1)
+        {
+            return response()->json('Design is not active.', 422); 
+        }
+        Designs::where('design_type_id', $design->design_type_id)->update([
+            'is_default' => 0
+        ]);
+        $design->is_default = 1;
         $design->save();  
     }
 }

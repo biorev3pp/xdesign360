@@ -1,34 +1,30 @@
 @extends('layouts.inner')
 @section('content')
-<div class="content-header row">
-    <div class="content-header-light col-12">
-        <div class="row align-items-center justify-content-between pr-3 pl-3">
-            <div class="content-header-left mb-2 pl-0">
-                <h3 class="content-header-title">Design Groups</h3>
-                <div class="row breadcrumbs-top">
-                    <div class="breadcrumb-wrapper col-12">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{route('home')}}">Home</a>
-                            </li>
-                            <li class="breadcrumb-item text-capitalize"><a href="{{route('design-group')}}">{{$design_group_title}}</a>
-                            </li>
-                            <li class="breadcrumb-item"><a href="#">Design Types</a>
-                            </li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-            <div class="content-header-right">
-                <a href="{{route('design-group')}}" class="btn btn-secondary square btn-min-width waves-effect waves-light box-shadow-2 px-2 standard-button"> 
-                    <i class="ft-arrow-left"></i>
-                    <span>Back</span>
-                </a>
-                <a href="javascript:;" onclick="designTypeModal(false)" class="btn btn-secondary square btn-min-width waves-effect waves-light box-shadow-2 px-2 standard-button"> 
-                    <i class="ft-plus"></i>
-                    <span>Add New</span>
-                </a>  
+<div class="content-header d-flex flex-wrap justify-content-between align-items-center bg-white" style="padding: 0.8rem 2rem 0.4rem;">
+    <div class="content-header-left p-0">
+        <h3 class="content-header-title m-0 mr-1">Design Groups</h3>
+        <div class="row breadcrumbs-top">
+            <div class="breadcrumb-wrapper col-12">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{route('home')}}">Home</a>
+                    </li>
+                    <li class="breadcrumb-item text-capitalize"><a href="{{route('design-group')}}">{{$design_group_title}}</a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="#">Design Types</a>
+                    </li>
+                </ol>
             </div>
         </div>
+    </div>
+    <div class="content-header-right">
+        <a href="{{route('design-group')}}" class="btn btn-secondary square btn-min-width waves-effect waves-light box-shadow-2 px-2 standard-button"> 
+            <i class="ft-arrow-left"></i>
+            <span>Back</span>
+        </a>
+        <a href="javascript:;" onclick="designTypeModal(false)" class="btn btn-secondary square btn-min-width waves-effect waves-light box-shadow-2 px-2 standard-button"> 
+            <i class="ft-plus"></i>
+            <span>Add New</span>
+        </a>    
     </div>
 </div>
 <div class="content-wrapper">
@@ -110,7 +106,11 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="submitButton" onclick="submitForm(true)" data-id="" class="btn btn-dark text-white m-0" data-design-group-id={{$design_type->design_group_id}}>Save Changes</button>
+                    <button type="button" id="submitButton" onclick="submitForm(true)" data-id="" class="btn btn-dark text-white m-0" data-design-group-id="{{$design_type->design_group_id}}">
+                        <span class="button-text"> Save Changes </span>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span class="sr-only">Loading...</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -128,7 +128,7 @@
         const modal = $('#addDesignTypeModal');
         if(values[0] == true){
             modal.find('.modal-title').text('Edit Design Type')
-            modal.find('.modal-footer button').text('Save Changes')
+            modal.find('.modal-footer button .button-text').text('Save Changes')
             const statusRadioButtons = $('#designTypeForm input[name="status"]');
             $.each(statusRadioButtons, function(){
                 if($(this).val() == values[5]){
@@ -150,7 +150,7 @@
         else{
             var form = document.getElementById('designTypeForm');
             modal.find('.modal-title').text('Add New Design Type')
-            modal.find('.modal-footer button').text('Add New')
+            modal.find('.modal-footer button .button-text').text('Add New')
             modal.find('.img-thumbnail').attr('src', '{{asset("media/placeholder.jpg")}}')  
             modal.find('#submitButton').attr('data-id', '');
             modal.find('#submitButton').attr('onclick', 'submitForm(false)');
@@ -215,6 +215,8 @@
         formData.append('status', status);
         formData.append('can_open', can_open);
         formData.append('thumbnail_image', thumbnailImage);
+        $("#addDesignTypeModal").find('.modal-footer button .button-text').addClass('hide-button-text');
+        $("#addDesignTypeModal").find('.modal-footer button .spinner-border').addClass('show-spinner');
 
         if(editable == true){
             const designTypeId = $("#submitButton").attr('data-id');
@@ -239,6 +241,8 @@
                     }
                     parent.find('.edit-button').attr('onclick', `designTypeModal(true, '${response.id}', '${response.title}', '${response.thumbnail}', '${response.can_open}', ${response.status_id})`);
                     $('#addDesignTypeModal').modal('hide');
+                    $("#addDesignTypeModal").find('.modal-footer button .button-text').removeClass('hide-button-text');
+                    $("#addDesignTypeModal").find('.modal-footer button .spinner-border').removeClass('show-spinner');
                 }
             });
         }
@@ -278,6 +282,8 @@
                             </div>`;
                     $('.content-wrapper .row').append(card);
                     $('#addDesignTypeModal').modal('hide');
+                    $("#addDesignTypeModal").find('.modal-footer button .button-text').removeClass('hide-button-text');
+                    $("#addDesignTypeModal").find('.modal-footer button .spinner-border').removeClass('show-spinner');
                 }
             });
         }

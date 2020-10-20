@@ -1,36 +1,32 @@
 @extends('layouts.inner')
 @section('content')
-<div class="content-header row">
-    <div class="content-header-light col-12">
-        <div class="row align-items-center justify-content-between pr-3 pl-3">
-            <div class="content-header-left mb-2 pl-0">
-                <h3 class="content-header-title">Design Groups</h3>
-                <div class="row breadcrumbs-top">
-                    <div class="breadcrumb-wrapper col-12">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{route('home')}}">Home</a>
-                            </li>
-                            <li class="breadcrumb-item text-capitalize"><a href="{{route('design-group')}}">{{$design_group_title}}</a>
-                            </li>
-                            <li class="breadcrumb-item"><a href="{{route('design-types', ['design_group_id' => $design_group_id])}}" class="text-capitalize">{{$design_type_title}}</a>
-                            </li>
-                            <li class="breadcrumb-item"><a href="#">Designs</a>
-                            </li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-            <div class="content-header-right">
-                <a href="{{route('design-types', ['design_group_id' => $design_group_id])}}" class="btn btn-secondary square btn-min-width waves-effect waves-light box-shadow-2 px-2 standard-button"> 
-                    <i class="ft-arrow-left"></i>
-                    <span>Back</span>
-                </a>
-                <a href="javascript:;" onclick="designModal(false)" class="btn btn-secondary square btn-min-width waves-effect waves-light box-shadow-2 px-2 standard-button"> 
-                    <i class="ft-plus"></i>
-                    <span>Add New</span>
-                </a>  
+<div class="content-header d-flex flex-wrap justify-content-between align-items-center bg-white" style="padding: 0.8rem 2rem 0.4rem;">
+    <div class="content-header-left p-0">
+        <h3 class="content-header-title m-0 mr-1">Design Groups</h3>
+        <div class="row breadcrumbs-top">
+            <div class="breadcrumb-wrapper col-12">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{route('home')}}">Home</a>
+                    </li>
+                    <li class="breadcrumb-item text-capitalize"><a href="{{route('design-group')}}">{{$design_group_title}}</a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="{{route('design-types', ['design_group_id' => $design_group_id])}}" class="text-capitalize">{{$design_type_title}}</a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="#">Designs</a>
+                    </li>
+                </ol>
             </div>
         </div>
+    </div>
+    <div class="content-header-right">
+        <a href="{{route('design-types', ['design_group_id' => $design_group_id])}}" class="btn btn-secondary square btn-min-width waves-effect waves-light box-shadow-2 px-2 standard-button"> 
+            <i class="ft-arrow-left"></i>
+            <span>Back</span>
+        </a>
+        <a href="javascript:;" onclick="designModal(false)" class="btn btn-secondary square btn-min-width waves-effect waves-light box-shadow-2 px-2 standard-button"> 
+            <i class="ft-plus"></i>
+            <span>Add New</span>
+        </a>   
     </div>
 </div>
 <div class="content-wrapper">
@@ -54,8 +50,8 @@
                         <img class="img-fluid" src="{{asset('media/uploads/'.$design_type_slug.'/'.$design->thumbnail)}}">
                         <div class="default-badge">
                             @if($design->is_default == 1)
-                            <div class="heading-elements" style="position:absolute; bottom:0px; left:10px">
-                                <span class="badge badge-success text-uppercase">default</span>
+                            <div style="position:absolute; bottom:0px; left:10px">
+                                <span class="badge badge-info text-uppercase">default</span>
                             </div>
                             @endif
                         </div>
@@ -70,7 +66,8 @@
                 <div class="card-footer border-top-blue-grey border-top-lighten-5 text-muted">
                     <span class="float-left">Updated On: <span>{{date('d-m-Y',strtotime($design->updated_at))}}</span></span>
                     <span class="float-right">
-                        <a href="javascript:;" onclick="designModal(true, {{$design->id}}, '{{$design->title}}', '{{$design->thumbnail}}', '{{$design->image_view1}}', '{{$design->image_view2}}', '{{$design->open_view_image}}', '{{$design->is_default}}', {{$design->price}}, '{{$design->material}}', '{{$design->manufacturer}}', '{{$design->product_id}}', {{$design->status_id}})" data-toggle="tooltip" title="Edit Design" class="text-dark mr-25 edit-button"> <i class="ft-edit"></i> </a>
+                        <a href="javascript:;" onclick="updateDefault({{$design->id}})" data-toggle="tooltip" title="Make Default" class="text-dark mr-25"> <i class="ft-check-square"></i> </a>
+                        <a href="javascript:;" onclick="designModal(true, {{$design->id}}, '{{$design->title}}', '{{$design->thumbnail}}', '{{$design->image_view1}}', '{{$design->image_view2}}', '{{$design->open_view_image}}', {{$design->price}}, '{{$design->material}}', '{{$design->manufacturer}}', '{{$design->product_id}}', {{$design->status_id}})" data-toggle="tooltip" title="Edit Design" class="text-dark mr-25 edit-button"> <i class="ft-edit"></i> </a>
                         <a href="javascript:;" onclick="deleteSwal({{$design->id}})" data-toggle="tooltip" title="Delete Design" class="text-dark mr-25"> <i class="ft-trash-2"></i> </a>
                     </span>
                 </div>
@@ -124,7 +121,7 @@
                             </figure>
                         </div>
                         <div class="mr-2">
-                            <label for="image" class="text-uppercase ml-0">View 1 Base Image</label>
+                            <label for="image" class="text-uppercase ml-0">{{$design_group_view1_title}} view base image</label>
                             <figure class="position-relative w-150 mb-0">
                                 <img src="{{asset('media/placeholder.jpg')}}" class="img-thumbnail">
                                 <input type="file" id="imageView1" class="d-none" onchange="readUrl(this, 'view1')">
@@ -132,7 +129,7 @@
                             </figure>
                         </div>
                         <div class="mr-2">
-                            <label for="image" class="text-uppercase ml-0">View 2 Base Image</label>
+                            <label for="image" class="text-uppercase ml-0">{{$design_group_view2_title}} view base image</label>
                             <figure class="position-relative w-150 mb-0">
                                 <img src="{{asset('media/placeholder.jpg')}}" class="img-thumbnail">
                                 <input type="file" id="imageView2" class="d-none" onchange="readUrl(this, 'view2')">
@@ -151,17 +148,6 @@
                         @endif
                     </div>
                     <div class="form-group">
-                        <label class="d-inline-block text-uppercase m-0">Is Default </label>
-                        <div class="d-inline-block custom-control custom-radio mr-1">
-                            <input type="radio" name="is_default" class="custom-control-input" id="isDefaultYes" value="1">
-                            <label class="custom-control-label" for="isDefaultYes">Yes</label>
-                        </div>
-                        <div class="d-inline-block custom-control custom-radio">
-                            <input type="radio"name="is_default" class="custom-control-input" id="isDefaultNo" value="0" checked>
-                            <label class="custom-control-label" for="isDefaultNo">No</label>
-                        </div>
-                    </div>
-                    <div class="form-group">
                         <label class="d-inline-block text-uppercase m-0">Activate </label>
                         <div class="d-inline-block custom-control custom-radio mr-1">
                             <input type="radio" name="status" class="custom-control-input" id="yes1" value="1">
@@ -174,7 +160,11 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="submitButton" onclick="submitForm(true)" data-type-id="{{$design_type_id}}" data-group-id="{{$design_group_id}}" data-type-slug="{{$design_type_slug}}" class="btn btn-dark text-white m-0">Save Changes</button>
+                    <button type="button" id="submitButton" onclick="submitForm(true)" data-type-id="{{$design_type_id}}" data-group-id="{{$design_group_id}}" data-type-slug="{{$design_type_slug}}" class="btn btn-dark text-white m-0">
+                        <span class="button-text"> Save Changes </span>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span class="sr-only">Loading...</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -186,6 +176,8 @@
     const designTypeCanOpen = {{$design_type_can_open}};
     const path = '{{asset("media/uploads/".$design_type_slug)}}';
     const date = new Date();
+    const view1Title = '{{$design_group_view1_title}}';
+    const view2Title = '{{$design_group_view2_title}}';
     let thumbnail = null, view1Image = null, view2Image = null, isChange = false;
     if(designTypeCanOpen == 1){
         let openViewImage = null;
@@ -210,24 +202,18 @@
         var modal = $('#addDesignModal');
         if(values[0] == true){
             modal.find('.modal-title').text('Edit Design')
-            modal.find('.modal-footer button').text('Save Changes')
+            modal.find('#submitButton .button-text').text('Save Changes')
             const statusRadioButtons = $('#designForm input[name="status"]');
             $.each(statusRadioButtons, function(){
-                if($(this).val() == values[12]){
-                    $(this).prop('checked', true);
-                }
-            });
-            const defaultRadioButtons = $('#designForm input[name="is_default"]');
-            $.each(defaultRadioButtons, function(){
-                if($(this).val() == values[7]){
+                if($(this).val() == values[11]){
                     $(this).prop('checked', true);
                 }
             });
             modal.find('#title').val(values[2]);
-            modal.find('#price').val(values[8]);
-            modal.find('#material').val(values[9]);
-            modal.find('#manufacturer').val(values[10]);
-            modal.find('#productId').val(values[11]);
+            modal.find('#price').val(values[7]);
+            modal.find('#material').val(values[8]);
+            modal.find('#manufacturer').val(values[9]);
+            modal.find('#productId').val(values[10]);
             if(values[3] != ""){
                 modal.find('#thumbnailImage').prev().attr('src', `${path}/${values[3]}`);
             }
@@ -247,7 +233,7 @@
         else{
             var form = document.getElementById('designForm');
             modal.find('.modal-title').text('Add New Design')
-            modal.find('.modal-footer button').text('Add New')
+            modal.find('#submitButton .button-text').text('Add New')
             modal.find('.img-thumbnail').attr('src', '{{asset("media/placeholder.jpg")}}')
             modal.find('#submitButton').attr('data-id', '');
             modal.find('#submitButton').attr('onclick', 'submitForm(false)');
@@ -264,50 +250,50 @@
     const imageValidation = () => {
         if(thumbnail == null){
             toastr.clear()
-            toastr.error('View 1 Base Image is required');
+            toastr.error(`Thumbnail is required`);
             return false;
         }
 
         if (fileType(thumbnail) != "jpeg" && fileType(thumbnail) != "jpg" && fileType(thumbnail) != "png") {
             toastr.clear()
-            toastr.error('Only jpeg, jpg, png formats are allowed for view 1 base image');
+            toastr.error('Only jpeg, jpg, png formats are allowed for thumbnail');
             return false;
         }
 
         if(view1Image == null){
             toastr.clear()
-            toastr.error('View 2 Base Image is required');
+            toastr.error(`${view1Title} view base image is required`);
             return false;
         }
         
         if (fileType(view1Image) != "jpeg" && fileType(view1Image) != "jpg" && fileType(view1Image) != "png") {
             toastr.clear()
-            toastr.error('Only jpeg, jpg, png formats are allowed for view 2 base image');
+            toastr.error(`Only jpeg, jpg, png formats are allowed for ${view1Title} view base image`);
             return false;
         }
 
         if(view2Image == null){
             toastr.clear()
-            toastr.error('View 1 Base Image is required');
+            toastr.error(`${view2Title} view base image is required`);
             return false;
         }
 
         if (fileType(view2Image) != "jpeg" && fileType(view2Image) != "jpg" && fileType(view2Image) != "png") {
             toastr.clear()
-            toastr.error('Only jpeg, jpg, png formats are allowed for view 1 base image');
+            toastr.error(`Only jpeg, jpg, png formats are allowed for ${view2Title} view base image`);
             return false;
         }
 
         if(designTypeCanOpen == 1){
             if(openViewImage == null){
                 toastr.clear()
-                toastr.error('View 2 Base Image is required');
+                toastr.error('Open view image is required');
                 return false;
             }
 
             if (fileType(openViewImage) != "jpeg" && fileType(openViewImage) != "jpg" && fileType(openViewImage) != "png") {
                 toastr.clear()
-                toastr.error('Only jpeg, jpg, png formats are allowed for view 2 base image');
+                toastr.error('Only jpeg, jpg, png formats are allowed for open view base image');
                 return false;
             }
         }
@@ -320,7 +306,6 @@
         const manufacturer = $('#manufacturer').val();
         const productId = $('#productId').val();
         const status = $('input[name="status"]:checked').val();
-        const isDefault = $('input[name="is_default"]:checked').val();
         const designTypeId = $("#submitButton").attr('data-type-id');
         const designTypeSlug = $("#submitButton").attr('data-type-slug');
 
@@ -387,7 +372,6 @@
         formData.append('material', material);
         formData.append('manufacturer', manufacturer);
         formData.append('product_id', productId);
-        formData.append('is_default', isDefault);
         formData.append('status', status);
         formData.append('thumbnail', thumbnail);
         formData.append('view1_image', view1Image);
@@ -397,6 +381,10 @@
         }
         formData.append('design_type_id', designTypeId);
         formData.append('design_type_slug', designTypeSlug);
+
+        $("#addDesignModal").find('#submitButton').addClass('disable');
+        $("#addDesignModal").find('#submitButton .button-text').addClass('hide-button-text');
+        $("#addDesignModal").find('#submitButton .spinner-border').addClass('show-spinner');
 
         if(editable == true){
             const designId = $("#submitButton").attr('data-id');
@@ -424,20 +412,14 @@
                     else if(response.status_id == 0){
                         parent.find('.heading-elements').html('<span class="badge badge-danger text-uppercase">deactive</span>');
                     }
-                    
-                    if(response.is_default == 1){
-                        $('.default-badge').html('');
-                        parent.find('.default-badge').html(`
-                            <div class="heading-elements" style="position:absolute; bottom:0px; left:10px">
-                                <span class="badge badge-success text-uppercase">default</span>
-                            </div>
-                        `);
-                    }
 
                     parent.find('.card-footer span:first-child span').html(`${date.getDate(response.updated_at)}-${date.getMonth(response.updated_at)}-${date.getFullYear(response.updated_at)}`);
 
-                    parent.find('.edit-button').attr('onclick', `designModal(true, ${response.id}, '${response.title}', '${response.thumbnail}', '${response.image_view1}', '${response.image_view1}', '${response.open_view_image}', ${response.is_default}, ${response.price}, '${response.material}', '${response.manufacturer}', '${response.product_id}', ${response.status_id})`);
+                    parent.find('.edit-button').attr('onclick', `designModal(true, ${response.id}, '${response.title}', '${response.thumbnail}', '${response.image_view1}', '${response.image_view1}', '${response.open_view_image}', ${response.price}, '${response.material}', '${response.manufacturer}', '${response.product_id}', ${response.status_id})`);
                     $('#addDesignModal').modal('hide');
+                    $("#addDesignModal").find('#submitButton').removeClass('disable');
+                    $("#addDesignModal").find('#submitButton .button-text').removeClass('hide-button-text');
+                    $("#addDesignModal").find('#submitButton .spinner-border').removeClass('show-spinner');
                 }
             });
         }
@@ -466,9 +448,7 @@
                                     <div class="card-content">
                                         <div class="d-flex justify-content-center" style="position:relative;">
                                             <img class="img-fluid" src="${path}/${response.thumbnail}">
-                                            <div class="default-badge">
-                                                ${(response.is_default == 1)?'<div class="heading-elements" style="position:absolute; bottom:0px; left:10px"><span class="badge badge-success text-uppercase">default</span></div>':''}
-                                            </div>
+                                            <div class="default-badge"></div>
                                         </div>
                                         <div class="card-body">
                                             <p class="card-text text-capitalize"><b>Price:</b> <span>${response.price}</span> </p>
@@ -480,7 +460,8 @@
                                     <div class="card-footer border-top-blue-grey border-top-lighten-5 text-muted">
                                         <span class="float-left">Updated On: ${date.getDate(response.updated_at)}-${date.getMonth(response.updated_at)}-${date.getFullYear(response.updated_at)}</span>
                                         <span class="float-right">
-                                            <a href="javascript:;" onclick="designModal(true, ${response.id}, '${response.title}', '${response.thumbnail}', '${response.image_view1}', '${response.image_view1}', '${response.open_view_image}', ${response.is_default}, ${response.price}, '${response.material}', '${response.manufacturer}', '${response.product_id}', ${response.status_id})" data-toggle="tooltip" title="Edit Design" class="text-dark mr-25 edit-button"> <i class="ft-edit"></i> </a>
+                                            <a href="javascript:;" onclick="updateDefault(${response.id})" data-toggle="tooltip" title="Make Default" class="text-dark mr-25"> <i class="ft-check-square"></i> </a>
+                                            <a href="javascript:;" onclick="designModal(true, ${response.id}, '${response.title}', '${response.thumbnail}', '${response.image_view1}', '${response.image_view1}', '${response.open_view_image}', ${response.price}, '${response.material}', '${response.manufacturer}', '${response.product_id}', ${response.status_id})" data-toggle="tooltip" title="Edit Design" class="text-dark mr-25 edit-button"> <i class="ft-edit"></i> </a>
                                             <a href="javascript:;" onclick="deleteSwal(${response.id})" data-toggle="tooltip" title="Delete Design" class="text-dark mr-25"> <i class="ft-trash-2"></i> </a>
                                         </span>
                                     </div>
@@ -488,6 +469,8 @@
                             </div>`;
                     $('.content-wrapper .row').append(card);
                     $('#addDesignModal').modal('hide');
+                    $("#addDesignModal").find('#submitButton .button-text').removeClass('hide-button-text');
+                    $("#addDesignModal").find('#submitButton .spinner-border').removeClass('show-spinner');
                 }
             });
         }
@@ -533,25 +516,51 @@
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                deleteDesign(designId);
-                Swal.fire(
-                'Deleted!',
-                'Your file has been deleted.',
-                'success'
-                )
+                if(deleteDesign(designId) == true){
+                    Swal.fire(
+                    'Deleted!',
+                    'Your file has been deleted.',
+                    'success'
+                    )
+                }
             }
         })
     }
 
     function deleteDesign(id){
+        let status = false;
         $.ajax({
             type: 'delete',
             url: '/api/delete-design',
             data: {design_id: id },
             success: function(){
                 $(`#card${id}`).parent().remove();
+                status = true;
+            },
+            error: function(error){
+                status = false;
+                toastr.error(error.responseJSON);
             }
         });
+        return status;
+    }
+
+    function updateDefault(designId){
+        $.ajax({
+            type: 'put',
+            url: '/api/update-default',
+            data: {design_id: designId},
+            success: function(){
+                $(".default-badge").html('');
+                $(`#card${designId}`).find('.default-badge').html(
+                    `<div style="position:absolute; bottom:0px; left:10px">
+                        <span class="badge badge-info text-uppercase">default</span>
+                    </div>`);
+            },
+            error: function(error){
+                toastr.error(error.responseJSON);
+            }
+        })
     }
 </script>
 @endpush

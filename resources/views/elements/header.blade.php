@@ -4,6 +4,7 @@
         <div class="navbar-header">
             <ul class="nav navbar-nav flex-row">
                 <li class="nav-item">
+                    <a onclick="toggleMenu()" id="mobileToggleMenu" style="display:none; color: #323232 !important; font-size: 30px;position: relative;top: 6px;" class="nav-link nav-menu-main menu-toggle p-0 m-0 text-white " href="javascript:;"><i class="ft-menu"></i></a>
                     <a class="navbar-brand d-inline-block" href="{{ url('/') }}">
                         <img class="brand-logo" alt="Biorev" src="{{ asset('/media/logo2.png') }}">
                     </a>

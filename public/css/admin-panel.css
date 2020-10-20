@@ -27370,7 +27370,7 @@
     .header-navbar.navbar-shadow {
       box-shadow: 0px 2px 30px 2px rgba(0, 0, 0, 0.1); }
     .header-navbar.navbar-brand-center .navbar-header {
-      width: 265px !important;
+      width: auto !important;
       top: 0;
       padding: 0;
       margin: 0;
@@ -31946,7 +31946,7 @@
         color: #6b6f82; }
   
   .material-vertical-layout.vertical-compact-menu .main-menu.menu-light {
-    border-right: 1px solid #E4E7ED; background: #2C303B; transition: 0.2s ease width;}
+    border-right: 1px solid #E4E7ED; background: #2C303B; transition: 0.2s ease width; overflow-x:hidden;}
   
   @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
     .material-vertical-layout .form-control, .material-horizontal-layout .form-control {
@@ -48090,7 +48090,7 @@
     }
   
     .menu-open .header-navbar.navbar-brand-center .navbar-header {
-      width: 265px !important;
+      width: auto !important;
     }
   
     html body .content .content-wrapper .content-body {
@@ -48119,15 +48119,23 @@
     .pt-20 {
       padding-top: 0 !important;
     }
+    .btn-min-width{
+      min-width: unset;
+    }
+    .header-navbar .navbar-header .navbar-brand{
+      margin-left: 0;
+    }
+    #mobileToggleMenu{
+      display: inline-block !important;
+    }
+    .side-menu-head-title-wrap a{
+      display:none;
+    }
   }
   
   @media (max-width: 540px) {
     .main-menu.menu-fixed {
       height: calc(100% - 6.13rem);
-    }
-  
-    .header-navbar.navbar-brand-center .navbar-header {
-      width: 55px !important;
     }
   
     .menu-open .header-navbar.navbar-brand-center .navbar-header {
@@ -48215,4 +48223,52 @@ footer p a {
   footer p {
     font-size: 9px;
   }
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: .2em;
+}
+
+.spinner-border {
+    display: none;
+    width: 1rem;
+    height: 1rem;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    vertical-align: text-bottom;
+    border: .25em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    -webkit-animation: spinner-border .75s linear infinite;
+    animation: spinner-border .75s linear infinite;
+}
+
+#submitButton{
+  pointer-events:unset;
+}
+
+#submitButton.disable{
+  pointer-events:none;
+}
+
+span.button-text{
+  opacity: 1;
+  transition:0.3s ease all;
+}
+
+span.button-text.hide-button-text{
+  opacity: 0;
+  pointer-events:none;
+}
+
+.spinner-border.show-spinner{
+  display: inline-block;
+}
+
+@keyframes spinner-border {
+  to { transform: rotate(360deg); }
 }

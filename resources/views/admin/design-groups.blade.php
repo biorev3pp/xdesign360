@@ -1,28 +1,24 @@
 @extends('layouts.inner')
 @section('content')
-<div class="content-header row">
-    <div class="content-header-light col-12">
-        <div class="row align-items-center justify-content-between pr-3 pl-3">
-            <div class="content-header-left mb-2 pl-0">
-                <h3 class="content-header-title">Design Groups</h3>
-                <div class="row breadcrumbs-top">
-                    <div class="breadcrumb-wrapper col-12">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{route('home')}}">Home</a>
-                            </li>
-                            <li class="breadcrumb-item"><a href="{{route('design-group')}}">Design Groups</a>
-                            </li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-            <div class="content-header-right">
-                <a href="javascript:;" onclick="designGroupModal(false)" class="btn btn-secondary square btn-min-width waves-effect waves-light box-shadow-2 px-2 standard-button"> 
-                    <i class="ft-plus"></i>
-                    <span>Add New</span>
-                </a>  
+<div class="content-header d-flex flex-wrap justify-content-between align-items-center bg-white" style="padding: 0.8rem 2rem 0.4rem;">
+    <div class="content-header-left p-0">
+        <h3 class="content-header-title m-0 mr-1">Design Groups</h3>
+        <div class="row breadcrumbs-top">
+            <div class="breadcrumb-wrapper pl-1">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{route('home')}}">Home</a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="{{route('design-group')}}">Design Groups</a>
+                    </li>
+                </ol>
             </div>
         </div>
+    </div>
+    <div class="content-header-right">
+        <a href="javascript:;" onclick="designGroupModal(false)" class="btn btn-secondary square btn-min-width waves-effect waves-light box-shadow-2 standard-button"> 
+            <i class="ft-plus"></i>
+            <span>Add New</span>
+        </a>  
     </div>
 </div>
 <div class="content-wrapper">
@@ -48,7 +44,7 @@
                     <span class="float-left">Updated On: {{date('d-m-Y',strtotime($design_group->updated_at))}}</span>
                     <span class="float-right">
                         <a href="{{route('design-types',['design_group_id' => base64_encode($design_group->id)])}}" data-toggle="tooltip" title="View Design Types" class="text-dark mr-25"> <i class="ft-eye"></i> </a>
-                        <a href="javascript:;" onclick="designGroupModal(true, '{{$design_group->title}}', '{{$design_group->status_id}}', '{{$design_group->base_image_view1}}', '{{$design_group->base_image_view2}}',{{$design_group->id}})" data-toggle="tooltip" title="Edit Design Group" class="text-dark mr-25 edit-button"> <i class="ft-edit"></i> </a>
+                        <a href="javascript:;" onclick="designGroupModal(true, '{{$design_group->title}}', '{{$design_group->status_id}}', '{{$design_group->base_image_view1}}', '{{$design_group->base_image_view2}}',{{$design_group->id}},'{{$design_group->view1_title}}','{{$design_group->view2_title}}' )" data-toggle="tooltip" title="Edit Design Group" class="text-dark mr-25 edit-button"> <i class="ft-edit"></i> </a>
                         <a href="javascript:;" onclick="deleteSwal({{$design_group->id}})" data-toggle="tooltip" title="Delete Design Group" class="text-dark mr-25"> <i class="ft-trash-2"></i> </a>
                     </span>
                 </div>
@@ -71,6 +67,16 @@
                     <div class="form-group">
                         <label class="text-uppercase">Title</label>
                         <input id="title" class="form-control border" type="text" placeholder="Enter title" required>
+                    </div>
+                    <div class="form-row mb-1">
+                        <div class="col">
+                            <label class="text-uppercase">View 1 Title</label>
+                            <input id="view1Title" class="form-control border" type="text" placeholder="Enter view 1 title" required>
+                        </div>
+                        <div class="col">
+                            <label class="text-uppercase">View 2 Title</label>
+                            <input id="view2Title" class="form-control border" type="text" placeholder="Enter view 2 title" required>
+                        </div>
                     </div>
                     <div class="form-group d-flex flex-wrap justify-content-start">
                         <div class="mr-2">
@@ -103,7 +109,10 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="submitButton" onclick="submitForm(true)" data-id="" class="btn btn-dark text-white m-0">Save Changes</button>
+                    <button type="button" id="submitButton" onclick="submitForm(true)" data-id="" class="btn btn-dark text-white m-0"> <span class="button-text"> Save Changes </span>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span class="sr-only">Loading...</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -113,6 +122,7 @@
 @push('scripts')
 <script>
     const path = '{{asset("media/uploads")}}';
+    const date = new Date();
     let view1BaseImage = null, view2BaseImage = null, isChange = false;
     function designGroupModal(...values){
         isChange = false;
@@ -121,9 +131,11 @@
         const modal = $('#addDesignGroupModal');
         if(values[0] == true){
             modal.find('.modal-title').text('Edit Design Group')
-            modal.find('.modal-footer button').text('Save Changes')
+            modal.find('.modal-footer button .button-text').text('Save Changes')
             const radioButtons = $('#designForm input[name="status"]');
             modal.find('#title').val(values[1]);
+            modal.find('#view1Title').val(values[6]);
+            modal.find('#view2Title').val(values[7]);
             $.each(radioButtons, function(){
                 if($(this).val() == values[2]){
                     $(this).prop('checked', true);
@@ -142,7 +154,7 @@
         else{
             var form = document.getElementById('designForm');
             modal.find('.modal-title').text('Add New Design Group')
-            modal.find('.modal-footer button').text('Add New')
+            modal.find('.modal-footer button .button-text').text('Add New')
             modal.find('.img-thumbnail').attr('src', '{{asset("media/placeholder.jpg")}}')
             modal.find('#submitButton').attr('data-id', '');
             modal.find('#submitButton').attr('onclick', 'submitForm(false)');
@@ -187,6 +199,8 @@
         
         const title = $('#title').val();
         const status = $('input[name="status"]:checked').val();
+        const view1Title = $('#view1Title').val();
+        const view2Title = $('#view2Title').val();
 
         // Validations
         if(title == ''){
@@ -200,6 +214,42 @@
             toastr.error('Title field should only contain alphabets.');
             return false;
         }
+
+        if(view1Title == ''){
+            toastr.clear()
+            toastr.error('View 1 Title field is required');
+            return false;
+        }
+
+        if(!(/^[A-Za-z ]+$/.test(view1Title))){
+            toastr.clear()
+            toastr.error('View 1 Title field should only contain alphabets.');
+            return false;
+        }
+
+        if(view1Title.length > 7){
+            toastr.clear()
+            toastr.error('View 1 Title field word length should not be more than 7.');
+            return false;
+        } 
+
+        if(view2Title == ''){
+            toastr.clear()
+            toastr.error('View 2 Title field is required');
+            return false;
+        }
+
+        if(!(/^[A-Za-z ]+$/.test(view2Title))){
+            toastr.clear()
+            toastr.error('View 2 Title field should only contain alphabets.');
+            return false;
+        }
+
+        if(view2Title.length > 7){
+            toastr.clear()
+            toastr.error('View 2 Title field word length should not be more than 7.');
+            return false;
+        }        
 
         if(editable == true){
             if(isChange == true){
@@ -217,11 +267,14 @@
         const formData = new FormData();
 
         formData.append('title', title);
+        formData.append('view1_title', view1Title);
+        formData.append('view2_title', view2Title);
         formData.append('status', status);
         formData.append('view1_base_image', view1BaseImage);
         formData.append('view2_base_image', view2BaseImage);
+        $("#addDesignGroupModal").find('.modal-footer button .button-text').addClass('hide-button-text');
+        $("#addDesignGroupModal").find('.modal-footer button .spinner-border').addClass('show-spinner');
         
-
         if(editable == true){
             const designGroupId = $("#submitButton").attr('data-id');
             formData.append('design_group_id', designGroupId);
@@ -244,8 +297,10 @@
                         parent.find('.heading-elements').html('<span class="badge badge-danger text-uppercase">deactive</span>');
                     }
 
-                    parent.find('.edit-button').attr('onclick', `designGroupModal(true, '${response.title}', '${response.status_id}', '${response.base_image_view1}', '${response.base_image_view2}', ${response.id})`);
+                    parent.find('.edit-button').attr('onclick', `designGroupModal(true, '${response.title}', '${response.status_id}', '${response.base_image_view1}', '${response.base_image_view2}', ${response.id}, '${response.view1_title}', '${response.view2_title}')`);
                     $('#addDesignGroupModal').modal('hide');
+                    $("#addDesignGroupModal").find('.modal-footer button .button-text').removeClass('hide-button-text');
+                    $("#addDesignGroupModal").find('.modal-footer button .spinner-border').removeClass('show-spinner');
                 }
             });
         }
@@ -283,6 +338,8 @@
                             </div>`;
                     $('.content-wrapper .row').append(card);
                     $('#addDesignGroupModal').modal('hide');
+                    $("#addDesignGroupModal").find('.modal-footer button .button-text').removeClass('hide-button-text');
+                    $("#addDesignGroupModal").find('.modal-footer button .spinner-border').removeClass('show-spinner');
                 }
             });
         }

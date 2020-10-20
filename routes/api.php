@@ -25,6 +25,8 @@ Route::delete('/delete-design-type', 'API\DesignController@deleteDesignType');
 Route::post('/edit-design', 'API\DesignController@modifyDesign');
 Route::post('/add-design', 'API\DesignController@createDesign');
 Route::delete('/delete-design', 'API\DesignController@deleteDesign');
+Route::put('/update-default', 'API\DesignController@updateDefault');
+
 //Profile
 Route::post('/edit-profile', 'API\UsersController@updateProfile');
 Route::post('/update-password', 'API\UsersController@updatePassword');

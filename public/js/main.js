@@ -541,3 +541,11 @@ function downloadPdf(){
         doc.save(`design-${view}.pdf`);
     });
 }
+
+$(".download-action-wrap").on('mouseover', function(){
+    $('.download-action-buttons').addClass('show-action-buttons');
+});
+
+$(".download-action-container").on('mouseleave', function(){
+    $('.download-action-buttons').removeClass('show-action-buttons');
+});

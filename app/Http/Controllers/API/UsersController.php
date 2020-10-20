@@ -36,6 +36,14 @@ class UsersController extends Controller
                 $user->password = Hash::make($request->new_password);
                 $user->save();
             }
+            else
+            {
+                return response()->json('New Password and Confirm new password fields does not match.', 422); 
+            }
+        }
+        else
+        {
+            return response()->json('Old password is incorrect, Please check again', 422); 
         }
     }
 }
