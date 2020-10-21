@@ -451,10 +451,14 @@
         }
 
         if(editable == true){
-            editImageValidation()
+            if(editImageValidation() == false){
+                return false;
+            }
         }
         else{
-            imageValidations();
+            if(imageValidation() == false){
+                return false;
+            }
         }
 
         const formData = new FormData();
@@ -562,6 +566,7 @@
                             </div>`;
                     $('.content-wrapper .row').append(card);
                     $('#addDesignModal').modal('hide');
+                    $("#addDesignModal").find('#submitButton').removeClass('disable');
                     $("#addDesignModal").find('#submitButton .button-text').removeClass('hide-button-text');
                     $("#addDesignModal").find('#submitButton .spinner-border').removeClass('show-spinner');
                 }

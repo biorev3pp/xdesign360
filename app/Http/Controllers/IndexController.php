@@ -28,7 +28,7 @@ class IndexController extends Controller
                 'status_id'         => 1,
                 'is_default'        => 1
                 ])->first();
-            if($design->image_view1)
+            if(isset($design->image_view1))
             {
                 $sources1[$design_type->slug] = asset('media/uploads/'.$design_type->title.'/'.$design->image_view1);
             }
@@ -44,7 +44,7 @@ class IndexController extends Controller
                 'status_id'         => 1,
                 'is_default'        => 1
                 ])->first();
-            if($design->image_view2)
+            if(isset($design->image_view2))
             {
                 $sources2[$design_type->slug] = asset('media/uploads/'.$design_type->title.'/'.$design->image_view2);
             }

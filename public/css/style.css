@@ -1107,6 +1107,10 @@ svg.button-active{
 		top: 6.2px !important;
 	}
 
+	.download-action-wrap p{
+		font-size: 9px;
+	}
+
 	.toggle-btn.active::before{
 		font-size: 9px !important;
 		left: 16px !important;

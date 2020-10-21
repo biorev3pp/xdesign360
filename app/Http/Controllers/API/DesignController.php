@@ -19,7 +19,6 @@ class DesignController extends Controller
 
     public function createDesignGroup(Request $request)
     {
-        dd("test");
         $destination_path = public_path('media/uploads');
         if($request->file('view1_base_image'))
         {
@@ -170,7 +169,7 @@ class DesignController extends Controller
 
     public function createDesign(Request $request)
     {   
-        $destination_path = public_path('media/uploads/'.$request->design_type_slug);
+        $destination_path = public_path('media/uploads/').$request->design_type_slug;
         if($request->file('thumbnail'))
         {
             $thumbnail_file = $request->file('thumbnail');
@@ -228,7 +227,7 @@ class DesignController extends Controller
 
         else
         {
-            $open_view_image_name = null;
+            $open_view2_image_name = null;
         }
 
         if($request->title)

@@ -37,7 +37,7 @@
                         <div class="heading-elements">
                             @if($design_type->status_id == 1)
                                 <span class="badge badge-success text-uppercase">active</span>
-                            @elseif($design_type->status_id == 2)
+                            @elseif($design_type->status_id == 0)
                                 <span class="badge badge-danger text-uppercase">deactive</span>
                             @endif
                         </div>
@@ -275,7 +275,7 @@
                                     <div class="card-footer border-top-blue-grey border-top-lighten-5 text-muted">
                                         <span class="float-left">Updated On: ${date.getDate(response.updated_at)}-${date.getMonth(response.updated_at)}-${date.getFullYear(response.updated_at)}</span>
                                         <span class="float-right">
-                                            <a href="/admin/design-groups/design-types/designs/${btoa(response.id)}/${response.design_group_id}" data-toggle="tooltip" title="View Design Types" class="text-dark mr-25"> <i class="ft-eye"></i> </a>
+                                            <a href="/admin/design-groups/design-types/designs/${btoa(response.id)}/${btoa(response.design_group_id)}" data-toggle="tooltip" title="View Design Types" class="text-dark mr-25"> <i class="ft-eye"></i> </a>
                                             <a href="javascript:;" onclick="designTypeModal(true, '${response.id}', '${response.title}', '${response.thumbnail}', '${response.can_open}',${response.status_id})" data-toggle="tooltip" title="Edit Design Group" class="text-dark mr-25 edit-button"> <i class="ft-edit"></i> </a>
                                             <a href="javascript:;" onclick="deleteSwal(${response.id})" data-toggle="tooltip" title="Delete Design Group" class="text-dark mr-25"> <i class="ft-trash-2"></i> </a>
                                         </span>
@@ -284,8 +284,9 @@
                             </div>`;
                     $('.content-wrapper .row').append(card);
                     $('#addDesignTypeModal').modal('hide');
-                    $("#addDesignTypeModal").find('.modal-footer button .button-text').removeClass('hide-button-text');
-                    $("#addDesignTypeModal").find('.modal-footer button .spinner-border').removeClass('show-spinner');
+                    $("#addDesignTypeModal").find('#submitButton').removeClass('disable');
+                    $("#addDesignTypeModal").find('#submitButton .button-text').removeClass('hide-button-text');
+                    $("#addDesignTypeModal").find('#submitButton .spinner-border').removeClass('show-spinner');
                 }
             });
         }

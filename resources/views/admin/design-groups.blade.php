@@ -281,10 +281,14 @@
         }        
 
         if(editable == true){
-            editImageValidation();
+            if(editImageValidation() == false){
+                return false;
+            }
         }
         else{
-            imageValidation();
+            if(imageValidation() == false){
+                return false;
+            }
         }
 
         const formData = new FormData();
@@ -363,8 +367,9 @@
                             </div>`;
                     $('.content-wrapper .row').append(card);
                     $('#addDesignGroupModal').modal('hide');
-                    $("#addDesignGroupModal").find('.modal-footer button .button-text').removeClass('hide-button-text');
-                    $("#addDesignGroupModal").find('.modal-footer button .spinner-border').removeClass('show-spinner');
+                    $("#addDesignGroupModal").find('#submitButton').removeClass('disable');
+                    $("#addDesignGroupModal").find('#submitButton .button-text').removeClass('hide-button-text');
+                    $("#addDesignGroupModal").find('#submitButton .spinner-border').removeClass('show-spinner');
                 }
             });
         }

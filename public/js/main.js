@@ -587,10 +587,10 @@ function downloadPdf(){
     });
 }
 
-$(".download-action-wrap").on('mouseover', function(){
+$(".download-action-wrap").on('mouseover touchstart', function(){
     $('.download-action-buttons').addClass('show-action-buttons');
 });
 
-$(".download-action-container").on('mouseleave', function(){
+$(".download-action-container").on('mouseleave touchend', function(){
     $('.download-action-buttons').removeClass('show-action-buttons');
 });
