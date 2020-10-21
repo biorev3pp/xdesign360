@@ -117,7 +117,7 @@
                         <div class="designs-wrapper container">
                             @if($design_type->can_open == 1)
                             <div class="d-flex align-items-center justify-content-end" style="margin-bottom:10px">
-                                <p class="m-0 mr-2">Open Cabinets</p>
+                                <p class="m-0 mr-2 text-capitalize">Open {{$design_type->title}}s</p>
                                 <input class="tgl tgl-ios" id="cb2" type="checkbox" />
                                 <label class="tgl-btn mb-0" for="cb2"></label>
                             </div>
@@ -132,7 +132,9 @@
                                             data-design-group-view2='{{($design_group->base_image_view2)?asset("media/uploads/".$design_group->base_image_view2):""}}'
                                             data-design-type='{{$design_type->slug}}'
                                             data-design-view1='{{($design->image_view1)?asset("media/uploads/".$design_type->title."/".$design->image_view1):""}}'
-                                            data-design-view2='{{($design->image_view2)?asset("media/uploads/".$design_type->title."/".$design->image_view2):""}}'></i>
+                                            data-design-view2='{{($design->image_view2)?asset("media/uploads/".$design_type->title."/".$design->image_view2):""}}'
+                                            data-open-view='{{($design->open_view_image)?asset("media/uploads/".$design_type->title."/".$design->open_view_image):""}}'
+                                            data-open-view2='{{($design->open_view2_image)?asset("media/uploads/".$design_type->title."/".$design->open_view2_image):""}}'></i>
                                             <i data-feather="info" onclick="showFeatureModal({{$design->id}}, '{{$design_type->title}}')"></i>
                                         </span>
                                     </div>

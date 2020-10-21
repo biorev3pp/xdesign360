@@ -258,22 +258,46 @@ $('#sortIcon').on('click', function(){
 
 // Toggle Button - Cabinet
 $('.tgl').on('click', function() {
+    const parent = $(this).parents('.designs-wrapper'),
+    element = parent.find('.check-color-option.button-active'),
+    designTypeValue = element.attr('data-design-type'),
+    designView1Value = element.attr('data-design-view1'),
+    designView2Value = element.attr('data-design-view2'), 
+    openViewImage = element.attr('data-open-view'),
+    openView2Image = element.attr('data-open-view2');
+    
     if($(this).is(':checked')) {
         $(this).prev().text('Close Cabinets');
+        if(openViewImage != ""){
+            sourcesView1[designTypeValue] = openViewImage;
+        }
+        if(openView2Image != ""){
+            sourcesView2[designTypeValue] = openView2Image;
+        }
     } else {
         $(this).prev().text('Open Cabinets');
+        sourcesView1[designTypeValue] = designView1Value;
+        sourcesView2[designTypeValue] = designView2Value;
+    }
+
+    if($('.toggle-btn').find('input.cb-value').is(':checked')) {
+        drawStuff(sourcesView2);
+    } else {
+        drawStuff(sourcesView1);
     }
 });
 
 // Color Design Click
 function selectColorOption(activeTab){
     $(activeTab).find('.check-color-option').on('click', function(){
-        var designGroupView1Value = $(this).attr('data-design-group-view1');
-        var designGroupView2Value = $(this).attr('data-design-group-view2'); 
-        var designTypeValue = $(this).attr('data-design-type'); 
-        var designView1Value = $(this).attr('data-design-view1'); 
-        var designView2Value = $(this).attr('data-design-view2'); 
-        changeLayers(designGroupView1Value, designGroupView2Value, designTypeValue, designView1Value, designView2Value);
+        const designGroupView1Value = $(this).attr('data-design-group-view1'),
+        designGroupView2Value = $(this).attr('data-design-group-view2'),
+        designTypeValue = $(this).attr('data-design-type'),
+        designView1Value = $(this).attr('data-design-view1'), 
+        designView2Value = $(this).attr('data-design-view2'),
+        openViewImage = $(this).attr('data-open-view'),
+        openView2Image = $(this).attr('data-open-view2');
+        changeLayers(designGroupView1Value, designGroupView2Value, designTypeValue, designView1Value, designView2Value, openViewImage, openView2Image);
 
         $(activeTab).find('.design-container').find('.check-color-option').removeClass('button-active');
         $(activeTab).find('.design-container').find('span').removeClass('show-buttons');
@@ -356,10 +380,10 @@ function filterData(){
 //Price Filter
 $('.price-filter').ionRangeSlider({
     type: "double",
-    min: 0,
-    max: 1200,
-    from: 0,
-    to: 1200,
+    min: minPrice,
+    max: maxPrice,
+    from: minPrice,
+    to: maxPrice,
     grid: false,
     skin: "round",
     hide_min_max: true,    
@@ -385,7 +409,7 @@ $('.price-filter').ionRangeSlider({
         filterMinPrice = data.from;
         filterMaxPrice = data.to;
         showFilteredData();
-    },
+    }
 });
 
 //Rating Filter
@@ -463,19 +487,40 @@ $.each($('.content-container'), function(){
 });
 
 // Layers Click Functionality
-function changeLayers(designGroupView1, designGroupView2, designType, designView1, designView2){
-    if(designGroupView1 != ""){
-        sourcesView1.base_image_view1 = designGroupView1;
+function changeLayers(...values){
+    if(values[0] != ""){
+        sourcesView1.base_image_view1 = values[0];
     }
-    if(designGroupView2 != ""){
-        sourcesView2.base_image_view2 = designGroupView2;
+    if(values[1] != ""){
+        sourcesView2.base_image_view2 = values[1];
     }
-    if(designView1 != ""){
-        sourcesView1[designType] = designView1;
+    if(values[3] != ""){
+        if($('#cb2').is(':checked')){
+            if(values[5] != ""){
+                sourcesView1[values[2]] = values[5];
+            }
+            else{
+                sourcesView1[values[2]] = values[3];
+            }
+        }
+        else{
+            sourcesView1[values[2]] = values[3];
+        }
     }
-    if(designView2 != ""){
-        sourcesView2[designType] = designView2;
+    if(values[4] != ""){
+        if($('#cb2').is(':checked')){
+            if(values[6] != ""){
+                sourcesView2[values[2]] = values[6];
+            }
+            else{
+                sourcesView2[values[2]] = values[4];
+            }
+        }
+        else{
+            sourcesView2[values[2]] = values[4];
+        }
     }
+    
     if($('.toggle-btn').find('input.cb-value').is(':checked')) {
         drawStuff(sourcesView2);
     } else {

@@ -67,7 +67,7 @@
                     <span class="float-left">Updated On: <span>{{date('d-m-Y',strtotime($design->updated_at))}}</span></span>
                     <span class="float-right">
                         <a href="javascript:;" onclick="updateDefault({{$design->id}})" data-toggle="tooltip" title="Make Default" class="text-dark mr-25"> <i class="ft-check-square"></i> </a>
-                        <a href="javascript:;" onclick="designModal(true, {{$design->id}}, '{{$design->title}}', '{{$design->thumbnail}}', '{{$design->image_view1}}', '{{$design->image_view2}}', '{{$design->open_view_image}}', {{$design->price}}, '{{$design->material}}', '{{$design->manufacturer}}', '{{$design->product_id}}', {{$design->status_id}})" data-toggle="tooltip" title="Edit Design" class="text-dark mr-25 edit-button"> <i class="ft-edit"></i> </a>
+                        <a href="javascript:;" onclick="designModal(true, {{$design->id}}, '{{$design->title}}', '{{$design->thumbnail}}', '{{$design->image_view1}}', '{{$design->image_view2}}', '{{$design->open_view_image}}', '{{$design->open_view2_image}}', {{$design->price}}, '{{$design->material}}', '{{$design->manufacturer}}', '{{$design->product_id}}', {{$design->status_id}})" data-toggle="tooltip" title="Edit Design" class="text-dark mr-25 edit-button"> <i class="ft-edit"></i> </a>
                         <a href="javascript:;" onclick="deleteSwal({{$design->id}})" data-toggle="tooltip" title="Delete Design" class="text-dark mr-25"> <i class="ft-trash-2"></i> </a>
                     </span>
                 </div>
@@ -77,7 +77,7 @@
     </div>
 </div>
 <div class="modal fade text-left" id="addDesignModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:50rem;">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:63rem;">
         <div class="modal-content">
             <div class="modal-header border-bottom">
                 <h3 class="modal-title"> Add New Design Group</h3>
@@ -87,28 +87,28 @@
             </div>
             <form id="designForm">
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label class="text-uppercase m-0">Title</label>
-                        <input name="title" id="title" class="form-control border" type="text" placeholder="Enter title" required>
-                    </div>
                     <div class="form-row mb-2">
+                        <div class="col">
+                            <label class="text-uppercase m-0">Title</label>
+                            <input name="title" id="title" class="form-control border" type="text" placeholder="Enter title" required>
+                        </div>
                         <div class="col">
                             <label class="text-uppercase">Price</label>
                             <input name="price" id="price" class="form-control border" type="number" placeholder="Enter price" required min="0" max="10000">
                         </div>
                         <div class="col">
-                            <label class="text-uppercase">Material</label>
-                            <input name="material" id="material" class="form-control border" type="text" placeholder="Enter material" required>
+                            <label class="text-uppercase">Product ID</label>
+                            <input name="product_id" id="productId" class="form-control border" type="text" placeholder="Enter product id" required>
                         </div>
                     </div>
                     <div class="form-row mb-2">
                         <div class="col">
-                            <label class="text-uppercase">Manufacturer</label>
-                            <input name="manufacturer" id="manufacturer" class="form-control border" type="text" placeholder="Enter manufacturer" required>
+                            <label class="text-uppercase">Material</label>
+                            <input name="material" id="material" class="form-control border" type="text" placeholder="Enter material" required>
                         </div>
                         <div class="col">
-                            <label class="text-uppercase">Product ID</label>
-                            <input name="product_id" id="productId" class="form-control border" type="text" placeholder="Enter product id" required>
+                            <label class="text-uppercase">Manufacturer</label>
+                            <input name="manufacturer" id="manufacturer" class="form-control border" type="text" placeholder="Enter manufacturer" required>
                         </div>
                     </div>
                     <div class="form-group d-flex flex-wrap justify-content-start">
@@ -137,12 +137,20 @@
                             </figure>
                         </div>
                         @if($design_type_can_open == 1)
-                        <div>
-                            <label for="image" class="text-uppercase ml-0">Open View Image</label>
+                        <div class="mr-2">
+                            <label for="image" class="text-uppercase ml-0">{{$design_group_view1_title}} view open image</label>
                             <figure class="position-relative w-150 mb-0">
                                 <img src="{{asset('media/placeholder.jpg')}}" class="img-thumbnail">
                                 <input type="file" id="openViewImage" class="d-none" onchange="readUrl(this, 'openView')">
                                 <label class="btn btn-sm btn-secondary in-block m-0" style="padding:0.59375rem 1rem" for="openViewImage"> <i class="ft-image"></i> Choose Image</label>
+                            </figure>
+                        </div>
+                        <div>
+                            <label for="image" class="text-uppercase ml-0">{{$design_group_view2_title}} view open image</label>
+                            <figure class="position-relative w-150 mb-0">
+                                <img src="{{asset('media/placeholder.jpg')}}" class="img-thumbnail">
+                                <input type="file" id="openView2Image" class="d-none" onchange="readUrl(this, 'openView2')">
+                                <label class="btn btn-sm btn-secondary in-block m-0" style="padding:0.59375rem 1rem" for="openView2Image"> <i class="ft-image"></i> Choose Image</label>
                             </figure>
                         </div>
                         @endif
@@ -178,9 +186,9 @@
     const date = new Date();
     const view1Title = '{{$design_group_view1_title}}';
     const view2Title = '{{$design_group_view2_title}}';
-    let thumbnail = null, view1Image = null, view2Image = null, isChange = false;
+    let thumbnail = null, view1Image = null, view2Image = null, isChange = null;
     if(designTypeCanOpen == 1){
-        let openViewImage = null;
+        let openViewImage = null, openView2Image = null;
     }
     //Price Formatter
     const formatter = new Intl.NumberFormat('en-US', {
@@ -191,12 +199,13 @@
     });
 
     function designModal(...values){
-        isChange = false;
+        isChange = null;
         thumbnail = null;
         view1Image = null;
         view2Image = null;
         if(designTypeCanOpen == 1){
             openViewImage = null;
+            openView2Image = null;
         }
 
         var modal = $('#addDesignModal');
@@ -205,15 +214,15 @@
             modal.find('#submitButton .button-text').text('Save Changes')
             const statusRadioButtons = $('#designForm input[name="status"]');
             $.each(statusRadioButtons, function(){
-                if($(this).val() == values[11]){
+                if($(this).val() == values[12]){
                     $(this).prop('checked', true);
                 }
             });
             modal.find('#title').val(values[2]);
-            modal.find('#price').val(values[7]);
-            modal.find('#material').val(values[8]);
-            modal.find('#manufacturer').val(values[9]);
-            modal.find('#productId').val(values[10]);
+            modal.find('#price').val(values[8]);
+            modal.find('#material').val(values[9]);
+            modal.find('#manufacturer').val(values[10]);
+            modal.find('#productId').val(values[11]);
             if(values[3] != ""){
                 modal.find('#thumbnailImage').prev().attr('src', `${path}/${values[3]}`);
             }
@@ -224,7 +233,10 @@
                 modal.find('#imageView2').prev().attr('src', `${path}/${values[5]}`);
             }
             if(values[6] != ""){
-                modal.find('#openViewImage').prev().attr('src', `${path}/${values[5]}`);
+                modal.find('#openViewImage').prev().attr('src', `${path}/${values[6]}`);
+            }
+            if(values[7] != ""){
+                modal.find('#openView2Image').prev().attr('src', `${path}/${values[7]}`);
             }
             modal.find('#submitButton').attr('data-id', values[1]);
             modal.find('#submitButton').attr('onclick', 'submitForm(true)');
@@ -287,14 +299,100 @@
         if(designTypeCanOpen == 1){
             if(openViewImage == null){
                 toastr.clear()
-                toastr.error('Open view image is required');
+                toastr.error(`${view1Title} view open image is required`);
                 return false;
             }
 
             if (fileType(openViewImage) != "jpeg" && fileType(openViewImage) != "jpg" && fileType(openViewImage) != "png") {
                 toastr.clear()
-                toastr.error('Only jpeg, jpg, png formats are allowed for open view base image');
+                toastr.error(`Only jpeg, jpg, png formats are allowed for ${view1Title} view open base image`);
                 return false;
+            }
+
+            if(openView2Image == null){
+                toastr.clear()
+                toastr.error(`${view2Title} view open image is required`);
+                return false;
+            }
+
+            if (fileType(openView2Image) != "jpeg" && fileType(openView2Image) != "jpg" && fileType(openView2Image) != "png") {
+                toastr.clear()
+                toastr.error(`nly jpeg, jpg, png formats are allowed for ${view2Title} view open base image`);
+                return false;
+            }
+        }
+    }
+
+    const editImageValidation = () => {
+        if(isChange == 'thumbnail'){
+            if(thumbnail == null){
+                toastr.clear()
+                toastr.error(`Thumbnail is required`);
+                return false;
+            }
+
+            if (fileType(thumbnail) != "jpeg" && fileType(thumbnail) != "jpg" && fileType(thumbnail) != "png") {
+                toastr.clear()
+                toastr.error('Only jpeg, jpg, png formats are allowed for thumbnail');
+                return false;
+            }
+        }
+
+        if(isChange == 'view1'){
+            if(view1Image == null){
+                toastr.clear()
+                toastr.error(`${view1Title} view base image is required`);
+                return false;
+            }
+            
+            if (fileType(view1Image) != "jpeg" && fileType(view1Image) != "jpg" && fileType(view1Image) != "png") {
+                toastr.clear()
+                toastr.error(`Only jpeg, jpg, png formats are allowed for ${view1Title} view base image`);
+                return false;
+            }
+        }
+
+        if(isChange == 'view2'){
+            if(view2Image == null){
+                toastr.clear()
+                toastr.error(`${view2Title} view base image is required`);
+                return false;
+            }
+
+            if (fileType(view2Image) != "jpeg" && fileType(view2Image) != "jpg" && fileType(view2Image) != "png") {
+                toastr.clear()
+                toastr.error(`Only jpeg, jpg, png formats are allowed for ${view2Title} view base image`);
+                return false;
+            }
+        }
+
+        if(designTypeCanOpen == 1){
+            if(isChange == 'openView'){
+                if(openViewImage == null){
+                    toastr.clear()
+                    toastr.error(`${view1Title} view open image is required`);
+                    return false;
+                }
+
+                if (fileType(openViewImage) != "jpeg" && fileType(openViewImage) != "jpg" && fileType(openViewImage) != "png") {
+                    toastr.clear()
+                    toastr.error(`Only jpeg, jpg, png formats are allowed for ${view1Title} view open base image`);
+                    return false;
+                }
+            }
+
+            if(isChange == 'openView2'){
+                if(openView2Image == null){
+                    toastr.clear()
+                    toastr.error(`${view2Title} view open image is required`);
+                    return false;
+                }
+
+                if (fileType(openView2Image) != "jpeg" && fileType(openView2Image) != "jpg" && fileType(openView2Image) != "png") {
+                    toastr.clear()
+                    toastr.error(`nly jpeg, jpg, png formats are allowed for ${view2Title} view open base image`);
+                    return false;
+                }
             }
         }
     }
@@ -353,16 +451,10 @@
         }
 
         if(editable == true){
-            if(isChange == true){
-                if(imageValidation() == false){
-                    return false;
-                }
-            }
+            editImageValidation()
         }
         else{
-            if(imageValidation() == false){
-                return false;
-            }
+            imageValidations();
         }
 
         const formData = new FormData();
@@ -378,6 +470,7 @@
         formData.append('view2_image', view2Image);
         if(designTypeCanOpen == 1){
             formData.append('open_view_image', openViewImage);
+            formData.append('open_view2_image', openView2Image);
         }
         formData.append('design_type_id', designTypeId);
         formData.append('design_type_slug', designTypeSlug);
@@ -415,7 +508,7 @@
 
                     parent.find('.card-footer span:first-child span').html(`${date.getDate(response.updated_at)}-${date.getMonth(response.updated_at)}-${date.getFullYear(response.updated_at)}`);
 
-                    parent.find('.edit-button').attr('onclick', `designModal(true, ${response.id}, '${response.title}', '${response.thumbnail}', '${response.image_view1}', '${response.image_view1}', '${response.open_view_image}', ${response.price}, '${response.material}', '${response.manufacturer}', '${response.product_id}', ${response.status_id})`);
+                    parent.find('.edit-button').attr('onclick', `designModal(true, ${response.id}, '${response.title}', '${response.thumbnail}', '${response.image_view1}', '${response.image_view1}', '${response.open_view_image}', '${response.open_view2_image}', ${response.price}, '${response.material}', '${response.manufacturer}', '${response.product_id}', ${response.status_id})`);
                     $('#addDesignModal').modal('hide');
                     $("#addDesignModal").find('#submitButton').removeClass('disable');
                     $("#addDesignModal").find('#submitButton .button-text').removeClass('hide-button-text');
@@ -461,7 +554,7 @@
                                         <span class="float-left">Updated On: ${date.getDate(response.updated_at)}-${date.getMonth(response.updated_at)}-${date.getFullYear(response.updated_at)}</span>
                                         <span class="float-right">
                                             <a href="javascript:;" onclick="updateDefault(${response.id})" data-toggle="tooltip" title="Make Default" class="text-dark mr-25"> <i class="ft-check-square"></i> </a>
-                                            <a href="javascript:;" onclick="designModal(true, ${response.id}, '${response.title}', '${response.thumbnail}', '${response.image_view1}', '${response.image_view1}', '${response.open_view_image}', ${response.price}, '${response.material}', '${response.manufacturer}', '${response.product_id}', ${response.status_id})" data-toggle="tooltip" title="Edit Design" class="text-dark mr-25 edit-button"> <i class="ft-edit"></i> </a>
+                                            <a href="javascript:;" onclick="designModal(true, ${response.id}, '${response.title}', '${response.thumbnail}', '${response.image_view1}', '${response.image_view1}', '${response.open_view_image}', '${response.open_view2_image}', ${response.price}, '${response.material}', '${response.manufacturer}', '${response.product_id}', ${response.status_id})" data-toggle="tooltip" title="Edit Design" class="text-dark mr-25 edit-button"> <i class="ft-edit"></i> </a>
                                             <a href="javascript:;" onclick="deleteSwal(${response.id})" data-toggle="tooltip" title="Delete Design" class="text-dark mr-25"> <i class="ft-trash-2"></i> </a>
                                         </span>
                                     </div>
@@ -479,7 +572,6 @@
     function readUrl(input, element) {
         if (input.files && input.files[0]) 
         {
-            isChange = true;
             var reader = new FileReader();
             reader.onload = function (e) 
             {
@@ -489,16 +581,24 @@
             switch(element){
                 case 'thumbnail': 
                     thumbnail = input.files[0];
+                    isChange = 'thumbnail';
                     break;
                 case 'view1': 
                     view1Image = input.files[0];
+                    isChange = 'view1';
                     break;
                 case 'view2': 
                     view2Image = input.files[0];
+                    isChange = 'view2';
                     break; 
                 case 'openView': 
                     openViewImage = input.files[0];
-                    break;   
+                    isChange = 'openView';
+                    break;  
+                case 'openView2': 
+                    openView2Image = input.files[0];
+                    isChange = 'openView2';
+                    break;  
                 default:
                     break;
             }

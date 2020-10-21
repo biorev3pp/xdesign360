@@ -123,9 +123,9 @@
 <script>
     const path = '{{asset("media/uploads")}}';
     const date = new Date();
-    let view1BaseImage = null, view2BaseImage = null, isChange = false;
+    let view1BaseImage = null, view2BaseImage = null, isChange = null;
     function designGroupModal(...values){
-        isChange = false;
+        isChange = null;
         view1BaseImage = null;
         view2BaseImage = null;
         const modal = $('#addDesignGroupModal');
@@ -195,6 +195,35 @@
         }
     }
 
+    const editImageValidation = () => {
+        if(isChange == 'view1'){
+            if(view1BaseImage == null){
+                toastr.clear()
+                toastr.error('View 1 Base Image is required');
+                return false;
+            }
+            if (fileType(view1BaseImage) != "jpeg" && fileType(view1BaseImage) != "jpg" && fileType(view1BaseImage) != "png") {
+                toastr.clear()
+                toastr.error('Only jpeg, jpg, png formats are allowed for view 1 base image');
+                return false;
+            }
+        }
+
+        if(isChange == 'view2'){
+            if(view2BaseImage == null){
+                toastr.clear()
+                toastr.error('View 2 Base Image is required');
+                return false;
+            }
+            
+            if (fileType(view2BaseImage) != "jpeg" && fileType(view2BaseImage) != "jpg" && fileType(view2BaseImage) != "png") {
+                toastr.clear()
+                toastr.error('Only jpeg, jpg, png formats are allowed for view 2 base image');
+                return false;
+            }
+        }
+    }
+
     function submitForm(editable){
         
         const title = $('#title').val();
@@ -252,16 +281,10 @@
         }        
 
         if(editable == true){
-            if(isChange == true){
-                if(imageValidation() == false){
-                    return false;
-                }
-            }
+            editImageValidation();
         }
         else{
-            if(imageValidation() == false){
-                return false;
-            }
+            imageValidation();
         }
 
         const formData = new FormData();
@@ -272,8 +295,9 @@
         formData.append('status', status);
         formData.append('view1_base_image', view1BaseImage);
         formData.append('view2_base_image', view2BaseImage);
-        $("#addDesignGroupModal").find('.modal-footer button .button-text').addClass('hide-button-text');
-        $("#addDesignGroupModal").find('.modal-footer button .spinner-border').addClass('show-spinner');
+        $("#addDesignGroupModal").find('#submitButton').addClass('disable');
+        $("#addDesignGroupModal").find('#submitButton .button-text').addClass('hide-button-text');
+        $("#addDesignGroupModal").find('#submitButton .spinner-border').addClass('show-spinner');
         
         if(editable == true){
             const designGroupId = $("#submitButton").attr('data-id');
@@ -299,8 +323,9 @@
 
                     parent.find('.edit-button').attr('onclick', `designGroupModal(true, '${response.title}', '${response.status_id}', '${response.base_image_view1}', '${response.base_image_view2}', ${response.id}, '${response.view1_title}', '${response.view2_title}')`);
                     $('#addDesignGroupModal').modal('hide');
-                    $("#addDesignGroupModal").find('.modal-footer button .button-text').removeClass('hide-button-text');
-                    $("#addDesignGroupModal").find('.modal-footer button .spinner-border').removeClass('show-spinner');
+                    $("#addDesignGroupModal").find('#submitButton').removeClass('disable');
+                    $("#addDesignGroupModal").find('#submitButton .button-text').removeClass('hide-button-text');
+                    $("#addDesignGroupModal").find('#submitButton .spinner-border').removeClass('show-spinner');
                 }
             });
         }
@@ -348,7 +373,6 @@
     function readUrl(input, element) {
         if (input.files && input.files[0]) 
         {  
-            isChange = true;
             var reader = new FileReader();
             reader.onload = function (e) 
             {
@@ -357,9 +381,11 @@
             reader.readAsDataURL(input.files[0]);
             if(element == 'view1'){
                 view1BaseImage = input.files[0];
+                isChange == 'view1';
             }
             else if(element == 'view2'){
                 view2BaseImage = input.files[0];
+                isChange == 'view2';
             }
         }
     }

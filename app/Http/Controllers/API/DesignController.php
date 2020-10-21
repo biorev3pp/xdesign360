@@ -219,6 +219,18 @@ class DesignController extends Controller
             $open_view_image_name = null;
         }
 
+        if($request->file('open_view2_image'))
+        {
+            $open_view2_image_file = $request->file('open_view2_image');
+            $open_view2_image_name = $open_view2_image_file->getClientOriginalName();
+            $open_view2_image_file->move($destination_path, $open_view2_image_name);
+        }
+
+        else
+        {
+            $open_view_image_name = null;
+        }
+
         if($request->title)
         {   
             $design = Designs::create([
@@ -230,6 +242,7 @@ class DesignController extends Controller
                 'image_view1'       => ($view1_image_name)?$view1_image_name:'',
                 'image_view2'       => ($view2_image_name)?$view2_image_name:'',
                 'open_view_image'   => ($open_view_image_name)?$open_view_image_name:'',
+                'open_view2_image'  => ($open_view2_image_name)?$open_view2_image_name:'',
                 'price'             => $request->price,
                 'material'          => $request->material,
                 'manufacturer'      => $request->manufacturer,
@@ -298,10 +311,18 @@ class DesignController extends Controller
 
         if($request->file('open_view_image'))
         {
-            $open_view_image_file = $request->file('view2_image');
+            $open_view_image_file = $request->file('open_view_image');
             $open_view_image_name = $open_view_image_file->getClientOriginalName();
             $open_view_image_file->move($destination_path, $open_view_image_name);
             $design->open_view_image = $open_view_image_name;
+        }
+
+        if($request->file('open_view2_image'))
+        {
+            $open_view2_image_file = $request->file('open_view2_image');
+            $open_view2_image_name = $open_view2_image_file->getClientOriginalName();
+            $open_view2_image_file->move($destination_path, $open_view2_image_name);
+            $design->open_view2_image = $open_view2_image_name;
         }
 
         $design->save();

@@ -215,8 +215,9 @@
         formData.append('status', status);
         formData.append('can_open', can_open);
         formData.append('thumbnail_image', thumbnailImage);
-        $("#addDesignTypeModal").find('.modal-footer button .button-text').addClass('hide-button-text');
-        $("#addDesignTypeModal").find('.modal-footer button .spinner-border').addClass('show-spinner');
+        $("#addDesignTypeModal").find('#submitButton').addClass('disable');
+        $("#addDesignTypeModal").find('#submitButton .button-text').addClass('hide-button-text');
+        $("#addDesignTypeModal").find('#submitButton .spinner-border').addClass('show-spinner');
 
         if(editable == true){
             const designTypeId = $("#submitButton").attr('data-id');
@@ -241,8 +242,9 @@
                     }
                     parent.find('.edit-button').attr('onclick', `designTypeModal(true, '${response.id}', '${response.title}', '${response.thumbnail}', '${response.can_open}', ${response.status_id})`);
                     $('#addDesignTypeModal').modal('hide');
-                    $("#addDesignTypeModal").find('.modal-footer button .button-text').removeClass('hide-button-text');
-                    $("#addDesignTypeModal").find('.modal-footer button .spinner-border').removeClass('show-spinner');
+                    $("#addDesignTypeModal").find('#submitButton').removeClass('disable');
+                    $("#addDesignTypeModal").find('#submitButton .button-text').removeClass('hide-button-text');
+                    $("#addDesignTypeModal").find('#submitButton .spinner-border').removeClass('show-spinner');
                 }
             });
         }
